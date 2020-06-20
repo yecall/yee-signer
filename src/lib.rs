@@ -18,6 +18,8 @@
 pub mod ffi;
 pub mod jni;
 
+mod error;
+
 use schnorrkel::{PublicKey, MiniSecretKey, ExpansionMode, SecretKey};
 use schnorrkel::Keypair as SrKeyPair;
 

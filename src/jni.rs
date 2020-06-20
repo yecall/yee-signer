@@ -18,17 +18,7 @@ use jni::sys::jbyteArray;
 use jni::sys::jlong;
 
 use crate::{KeyPair, Verifier, SignerResult};
-
-fn error_code(error: &str) -> i8 {
-	match error {
-		"invalid mini secret key" => 2,
-		"invalid secret key" => 3,
-		"invalid public key" => 4,
-		"invalid signature" => 5,
-		"jni error" => 6,
-		_ => 1,
-	}
-}
+use crate::error::error_code;
 
 #[no_mangle]
 pub extern "system" fn Java_io_yeeco_yeesigner_JNI_keyPairFromMiniSecretKey

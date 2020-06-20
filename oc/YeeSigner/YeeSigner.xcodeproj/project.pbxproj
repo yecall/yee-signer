@@ -1,0 +1,642 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		26DAD334249DD91C00E0ADB4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD333249DD91C00E0ADB4 /* AppDelegate.m */; };
+		26DAD337249DD91C00E0ADB4 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD336249DD91C00E0ADB4 /* SceneDelegate.m */; };
+		26DAD33A249DD91C00E0ADB4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD339249DD91C00E0ADB4 /* ViewController.m */; };
+		26DAD33D249DD91C00E0ADB4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 26DAD33B249DD91C00E0ADB4 /* Main.storyboard */; };
+		26DAD33F249DD91E00E0ADB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26DAD33E249DD91E00E0ADB4 /* Assets.xcassets */; };
+		26DAD342249DD91E00E0ADB4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 26DAD340249DD91E00E0ADB4 /* LaunchScreen.storyboard */; };
+		26DAD345249DD91E00E0ADB4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD344249DD91E00E0ADB4 /* main.m */; };
+		26DAD34F249DD91E00E0ADB4 /* YeeSignerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD34E249DD91E00E0ADB4 /* YeeSignerTests.m */; };
+		26DAD35A249DD91E00E0ADB4 /* YeeSignerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD359249DD91E00E0ADB4 /* YeeSignerUITests.m */; };
+		26DAD373249DE0BA00E0ADB4 /* libyee_signer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26DAD372249DE0BA00E0ADB4 /* libyee_signer.a */; };
+		26DAD376249DE29200E0ADB4 /* KeyPair.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD375249DE29200E0ADB4 /* KeyPair.m */; };
+		26DAD379249DEA7E00E0ADB4 /* NSData+HexString.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD378249DEA7E00E0ADB4 /* NSData+HexString.m */; };
+		26DAD37C249DFB0800E0ADB4 /* Verifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD37B249DFB0800E0ADB4 /* Verifier.m */; };
+		26DAD382249DFF7000E0ADB4 /* ErrorUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD381249DFF7000E0ADB4 /* ErrorUtils.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		26DAD34B249DD91E00E0ADB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26DAD327249DD91C00E0ADB4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26DAD32E249DD91C00E0ADB4;
+			remoteInfo = YeeSigner;
+		};
+		26DAD356249DD91E00E0ADB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26DAD327249DD91C00E0ADB4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26DAD32E249DD91C00E0ADB4;
+			remoteInfo = YeeSigner;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		26DAD32F249DD91C00E0ADB4 /* YeeSigner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YeeSigner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		26DAD332249DD91C00E0ADB4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		26DAD333249DD91C00E0ADB4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		26DAD335249DD91C00E0ADB4 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		26DAD336249DD91C00E0ADB4 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
+		26DAD338249DD91C00E0ADB4 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		26DAD339249DD91C00E0ADB4 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		26DAD33C249DD91C00E0ADB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		26DAD33E249DD91E00E0ADB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		26DAD341249DD91E00E0ADB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		26DAD343249DD91E00E0ADB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		26DAD344249DD91E00E0ADB4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		26DAD34A249DD91E00E0ADB4 /* YeeSignerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeeSignerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26DAD34E249DD91E00E0ADB4 /* YeeSignerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YeeSignerTests.m; sourceTree = "<group>"; };
+		26DAD350249DD91E00E0ADB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		26DAD355249DD91E00E0ADB4 /* YeeSignerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeeSignerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		26DAD359249DD91E00E0ADB4 /* YeeSignerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YeeSignerUITests.m; sourceTree = "<group>"; };
+		26DAD35B249DD91E00E0ADB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		26DAD36C249DDD5000E0ADB4 /* libyee_signer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyee_signer.a; path = ../../target/universal/release/libyee_signer.a; sourceTree = "<group>"; };
+		26DAD371249DE0B900E0ADB4 /* libyee_signer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libyee_signer.h; sourceTree = "<group>"; };
+		26DAD372249DE0BA00E0ADB4 /* libyee_signer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyee_signer.a; sourceTree = "<group>"; };
+		26DAD374249DE29200E0ADB4 /* KeyPair.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyPair.h; sourceTree = "<group>"; };
+		26DAD375249DE29200E0ADB4 /* KeyPair.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyPair.m; sourceTree = "<group>"; };
+		26DAD377249DEA7E00E0ADB4 /* NSData+HexString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+HexString.h"; sourceTree = "<group>"; };
+		26DAD378249DEA7E00E0ADB4 /* NSData+HexString.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexString.m"; sourceTree = "<group>"; };
+		26DAD37A249DFB0800E0ADB4 /* Verifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verifier.h; sourceTree = "<group>"; };
+		26DAD37B249DFB0800E0ADB4 /* Verifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Verifier.m; sourceTree = "<group>"; };
+		26DAD380249DFF7000E0ADB4 /* ErrorUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ErrorUtils.h; sourceTree = "<group>"; };
+		26DAD381249DFF7000E0ADB4 /* ErrorUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ErrorUtils.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		26DAD32C249DD91C00E0ADB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DAD373249DE0BA00E0ADB4 /* libyee_signer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD347249DD91E00E0ADB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD352249DD91E00E0ADB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		26DAD326249DD91C00E0ADB4 = {
+			isa = PBXGroup;
+			children = (
+				26DAD331249DD91C00E0ADB4 /* YeeSigner */,
+				26DAD34D249DD91E00E0ADB4 /* YeeSignerTests */,
+				26DAD358249DD91E00E0ADB4 /* YeeSignerUITests */,
+				26DAD330249DD91C00E0ADB4 /* Products */,
+				26DAD36B249DDD5000E0ADB4 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		26DAD330249DD91C00E0ADB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD32F249DD91C00E0ADB4 /* YeeSigner.app */,
+				26DAD34A249DD91E00E0ADB4 /* YeeSignerTests.xctest */,
+				26DAD355249DD91E00E0ADB4 /* YeeSignerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		26DAD331249DD91C00E0ADB4 /* YeeSigner */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD370249DE0B900E0ADB4 /* YeeSigner */,
+				26DAD332249DD91C00E0ADB4 /* AppDelegate.h */,
+				26DAD333249DD91C00E0ADB4 /* AppDelegate.m */,
+				26DAD335249DD91C00E0ADB4 /* SceneDelegate.h */,
+				26DAD336249DD91C00E0ADB4 /* SceneDelegate.m */,
+				26DAD338249DD91C00E0ADB4 /* ViewController.h */,
+				26DAD339249DD91C00E0ADB4 /* ViewController.m */,
+				26DAD33B249DD91C00E0ADB4 /* Main.storyboard */,
+				26DAD33E249DD91E00E0ADB4 /* Assets.xcassets */,
+				26DAD340249DD91E00E0ADB4 /* LaunchScreen.storyboard */,
+				26DAD343249DD91E00E0ADB4 /* Info.plist */,
+				26DAD344249DD91E00E0ADB4 /* main.m */,
+				26DAD377249DEA7E00E0ADB4 /* NSData+HexString.h */,
+				26DAD378249DEA7E00E0ADB4 /* NSData+HexString.m */,
+			);
+			path = YeeSigner;
+			sourceTree = "<group>";
+		};
+		26DAD34D249DD91E00E0ADB4 /* YeeSignerTests */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD34E249DD91E00E0ADB4 /* YeeSignerTests.m */,
+				26DAD350249DD91E00E0ADB4 /* Info.plist */,
+			);
+			path = YeeSignerTests;
+			sourceTree = "<group>";
+		};
+		26DAD358249DD91E00E0ADB4 /* YeeSignerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD359249DD91E00E0ADB4 /* YeeSignerUITests.m */,
+				26DAD35B249DD91E00E0ADB4 /* Info.plist */,
+			);
+			path = YeeSignerUITests;
+			sourceTree = "<group>";
+		};
+		26DAD36B249DDD5000E0ADB4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD36C249DDD5000E0ADB4 /* libyee_signer.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		26DAD370249DE0B900E0ADB4 /* YeeSigner */ = {
+			isa = PBXGroup;
+			children = (
+				26DAD371249DE0B900E0ADB4 /* libyee_signer.h */,
+				26DAD372249DE0BA00E0ADB4 /* libyee_signer.a */,
+				26DAD374249DE29200E0ADB4 /* KeyPair.h */,
+				26DAD375249DE29200E0ADB4 /* KeyPair.m */,
+				26DAD37A249DFB0800E0ADB4 /* Verifier.h */,
+				26DAD37B249DFB0800E0ADB4 /* Verifier.m */,
+				26DAD380249DFF7000E0ADB4 /* ErrorUtils.h */,
+				26DAD381249DFF7000E0ADB4 /* ErrorUtils.m */,
+			);
+			path = YeeSigner;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		26DAD32E249DD91C00E0ADB4 /* YeeSigner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26DAD35E249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSigner" */;
+			buildPhases = (
+				26DAD32B249DD91C00E0ADB4 /* Sources */,
+				26DAD32C249DD91C00E0ADB4 /* Frameworks */,
+				26DAD32D249DD91C00E0ADB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YeeSigner;
+			productName = YeeSigner;
+			productReference = 26DAD32F249DD91C00E0ADB4 /* YeeSigner.app */;
+			productType = "com.apple.product-type.application";
+		};
+		26DAD349249DD91E00E0ADB4 /* YeeSignerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26DAD361249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSignerTests" */;
+			buildPhases = (
+				26DAD346249DD91E00E0ADB4 /* Sources */,
+				26DAD347249DD91E00E0ADB4 /* Frameworks */,
+				26DAD348249DD91E00E0ADB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26DAD34C249DD91E00E0ADB4 /* PBXTargetDependency */,
+			);
+			name = YeeSignerTests;
+			productName = YeeSignerTests;
+			productReference = 26DAD34A249DD91E00E0ADB4 /* YeeSignerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		26DAD354249DD91E00E0ADB4 /* YeeSignerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26DAD364249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSignerUITests" */;
+			buildPhases = (
+				26DAD351249DD91E00E0ADB4 /* Sources */,
+				26DAD352249DD91E00E0ADB4 /* Frameworks */,
+				26DAD353249DD91E00E0ADB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				26DAD357249DD91E00E0ADB4 /* PBXTargetDependency */,
+			);
+			name = YeeSignerUITests;
+			productName = YeeSignerUITests;
+			productReference = 26DAD355249DD91E00E0ADB4 /* YeeSignerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		26DAD327249DD91C00E0ADB4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = io.yeeco;
+				TargetAttributes = {
+					26DAD32E249DD91C00E0ADB4 = {
+						CreatedOnToolsVersion = 11.4.1;
+					};
+					26DAD349249DD91E00E0ADB4 = {
+						CreatedOnToolsVersion = 11.4.1;
+						TestTargetID = 26DAD32E249DD91C00E0ADB4;
+					};
+					26DAD354249DD91E00E0ADB4 = {
+						CreatedOnToolsVersion = 11.4.1;
+						TestTargetID = 26DAD32E249DD91C00E0ADB4;
+					};
+				};
+			};
+			buildConfigurationList = 26DAD32A249DD91C00E0ADB4 /* Build configuration list for PBXProject "YeeSigner" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 26DAD326249DD91C00E0ADB4;
+			productRefGroup = 26DAD330249DD91C00E0ADB4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				26DAD32E249DD91C00E0ADB4 /* YeeSigner */,
+				26DAD349249DD91E00E0ADB4 /* YeeSignerTests */,
+				26DAD354249DD91E00E0ADB4 /* YeeSignerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		26DAD32D249DD91C00E0ADB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DAD342249DD91E00E0ADB4 /* LaunchScreen.storyboard in Resources */,
+				26DAD33F249DD91E00E0ADB4 /* Assets.xcassets in Resources */,
+				26DAD33D249DD91C00E0ADB4 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD348249DD91E00E0ADB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD353249DD91E00E0ADB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		26DAD32B249DD91C00E0ADB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DAD33A249DD91C00E0ADB4 /* ViewController.m in Sources */,
+				26DAD379249DEA7E00E0ADB4 /* NSData+HexString.m in Sources */,
+				26DAD382249DFF7000E0ADB4 /* ErrorUtils.m in Sources */,
+				26DAD334249DD91C00E0ADB4 /* AppDelegate.m in Sources */,
+				26DAD376249DE29200E0ADB4 /* KeyPair.m in Sources */,
+				26DAD37C249DFB0800E0ADB4 /* Verifier.m in Sources */,
+				26DAD345249DD91E00E0ADB4 /* main.m in Sources */,
+				26DAD337249DD91C00E0ADB4 /* SceneDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD346249DD91E00E0ADB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DAD34F249DD91E00E0ADB4 /* YeeSignerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DAD351249DD91E00E0ADB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26DAD35A249DD91E00E0ADB4 /* YeeSignerUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		26DAD34C249DD91E00E0ADB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26DAD32E249DD91C00E0ADB4 /* YeeSigner */;
+			targetProxy = 26DAD34B249DD91E00E0ADB4 /* PBXContainerItemProxy */;
+		};
+		26DAD357249DD91E00E0ADB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26DAD32E249DD91C00E0ADB4 /* YeeSigner */;
+			targetProxy = 26DAD356249DD91E00E0ADB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		26DAD33B249DD91C00E0ADB4 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				26DAD33C249DD91C00E0ADB4 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		26DAD340249DD91E00E0ADB4 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				26DAD341249DD91E00E0ADB4 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		26DAD35C249DD91E00E0ADB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		26DAD35D249DD91E00E0ADB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		26DAD35F249DD91E00E0ADB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = YeeSigner/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/YeeSigner/YeeSigner";
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSigner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		26DAD360249DD91E00E0ADB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = YeeSigner/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/YeeSigner/YeeSigner";
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSigner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		26DAD362249DD91E00E0ADB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				INFOPLIST_FILE = YeeSignerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSignerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YeeSigner.app/YeeSigner";
+			};
+			name = Debug;
+		};
+		26DAD363249DD91E00E0ADB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				INFOPLIST_FILE = YeeSignerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSignerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YeeSigner.app/YeeSigner";
+			};
+			name = Release;
+		};
+		26DAD365249DD91E00E0ADB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				INFOPLIST_FILE = YeeSignerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSignerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YeeSigner;
+			};
+			name = Debug;
+		};
+		26DAD366249DD91E00E0ADB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = YAQY39S44F;
+				INFOPLIST_FILE = YeeSignerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.yeeco.YeeSignerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YeeSigner;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		26DAD32A249DD91C00E0ADB4 /* Build configuration list for PBXProject "YeeSigner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26DAD35C249DD91E00E0ADB4 /* Debug */,
+				26DAD35D249DD91E00E0ADB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26DAD35E249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSigner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26DAD35F249DD91E00E0ADB4 /* Debug */,
+				26DAD360249DD91E00E0ADB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26DAD361249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSignerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26DAD362249DD91E00E0ADB4 /* Debug */,
+				26DAD363249DD91E00E0ADB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26DAD364249DD91E00E0ADB4 /* Build configuration list for PBXNativeTarget "YeeSignerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26DAD365249DD91E00E0ADB4 /* Debug */,
+				26DAD366249DD91E00E0ADB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 26DAD327249DD91C00E0ADB4 /* Project object */;
+}
