@@ -1,57 +1,52 @@
-package io.yeeco.yeesigner;
-
+import io.yeeco.yeesigner.KeyPair;
+import io.yeeco.yeesigner.Verifier;
 import org.apache.commons.codec.binary.Hex;
+import org.junit.Test;
 
-public class Main {
+import static org.junit.Assert.assertEquals;
+
+public class SingerTest {
 
     static {
         System.load("/Users/gb/Dev/workspace_yeeco/yee-signer/target/debug/libyee_signer.dylib");
     }
 
-    public static void main(String[] args) throws Exception {
-
-        testKeyPairFromMiniSecretKey();
-        testKeyPairFromSecretKey();
-        testKeyPairSignVerify();
-        testKeyPairSignVerifyFail();
-
-    }
-
-    private static void testKeyPairFromMiniSecretKey() throws Exception {
+    @Test
+    public void testKeyPairFromMiniSecretKey() throws Exception {
 
         byte[] miniSecretKey = Hex.decodeHex("579d7aa286b37b800b95fe41adabbf0c2a577caf2854baeca98f8fb242ff43ae");
         KeyPair keyPair = KeyPair.fromMiniSecretKey(miniSecretKey);
 
         byte[] publicKey = keyPair.getPublicKey();
-        System.out.println(Hex.encodeHexString(publicKey));
+        assertEquals(Hex.encodeHexString(publicKey), "4ef0125fab173ceb93ce4c2a97e6824396240101b9c7220e3fd63e3a2282cf20");
 
         byte[] secretKey = keyPair.getSecretKey();
-        System.out.println(Hex.encodeHexString(secretKey));
+        assertEquals(Hex.encodeHexString(secretKey), "bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
 
     }
 
-    private static void testKeyPairFromSecretKey() throws Exception {
+    @Test
+    public void testKeyPairFromSecretKey() throws Exception {
 
         byte[] miniSecretKey = Hex.decodeHex("bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
         KeyPair keyPair = KeyPair.fromSecretKey(miniSecretKey);
 
         byte[] publicKey = keyPair.getPublicKey();
-        System.out.println(Hex.encodeHexString(publicKey));
+        assertEquals(Hex.encodeHexString(publicKey), "4ef0125fab173ceb93ce4c2a97e6824396240101b9c7220e3fd63e3a2282cf20");
 
         byte[] secretKey = keyPair.getSecretKey();
-        System.out.println(Hex.encodeHexString(secretKey));
+        assertEquals(Hex.encodeHexString(secretKey), "bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
     }
 
-    private static void testKeyPairSignVerify() throws Exception {
+    @Test
+    public void testKeyPairSignVerify() throws Exception {
 
         byte[] miniSecretKey = Hex.decodeHex("bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
         KeyPair keyPair = KeyPair.fromSecretKey(miniSecretKey);
 
-        byte[] message = new byte[]{1,2,3};
+        byte[] message = new byte[]{1, 2, 3};
 
         byte[] signature = keyPair.sign(message);
-
-        System.out.println(Hex.encodeHexString(signature));
 
         Verifier verifier = Verifier.fromPublicKey(keyPair.getPublicKey());
 
@@ -59,26 +54,28 @@ public class Main {
 
     }
 
-    private static void testKeyPairSignVerifyFail() throws Exception {
+    @Test
+    public void testKeyPairSignVerifyFail() throws Exception {
 
         byte[] miniSecretKey = Hex.decodeHex("bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
         KeyPair keyPair = KeyPair.fromSecretKey(miniSecretKey);
 
-        byte[] message = new byte[]{1,2,3};
+        byte[] message = new byte[]{1, 2, 3};
 
         byte[] signature = keyPair.sign(message);
-
-        System.out.println(Hex.encodeHexString(signature));
 
         Verifier verifier = Verifier.fromPublicKey(keyPair.getPublicKey());
 
         signature[0] = 0;
 
+        boolean ok = false;
         try {
             verifier.verify(signature, message);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+            ok = true;
+        } catch (Exception e) {
         }
+
+        assertEquals(ok, false);
 
     }
 
