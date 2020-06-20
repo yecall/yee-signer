@@ -9,6 +9,15 @@ Yee signer provides the following binds:
 
 ## Java
 
+### Requirements
+Install Android Studio and NDK.
+
+Set $ANDROID_NDK_HOME.
+
+```
+rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android
+```
+
 ### Build
 ```
 sh build.sh
