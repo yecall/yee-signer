@@ -17,6 +17,7 @@
 
 pub mod ffi;
 pub mod jni;
+pub mod tx;
 
 mod error;
 
