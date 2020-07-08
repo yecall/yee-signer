@@ -12,7 +12,8 @@ crate-type = ["cdylib", "rlib", "staticlib"]
 [dependencies]
 schnorrkel = "0.8.5"
 jni = "0.16.0"
-parity-codec = { version = "3.2", default-features = false, features = ["derive"] }
+parity-codec = { version = "=3.2", features = ["derive"] }
+rust_crypto = { version = "0.2.36", package = "rust-crypto" }
 
 [dev-dependencies]
 hex = "0.3.2"

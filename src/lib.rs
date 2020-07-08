@@ -49,6 +49,25 @@ impl KeyPair {
 		Ok(Self(key_pair))
 	}
 
+	pub fn from_legacy_secret_key(bytes: &[u8]) -> SignerResult<Self> {
+		if bytes.len()!= SECRET_KEY_LEN {
+			return Err("invalid legacy secret key".to_string());
+		}
+
+		let mut key: [u8; 32] = [0u8; 32];
+		key.copy_from_slice(&bytes[00..32]);
+		divide_scalar_bytes_by_cofactor(&mut key);
+
+		let mut nonce: [u8; 32] = [0u8; 32];
+		nonce.copy_from_slice(&bytes[32..64]);
+
+		let mut new_key = [0u8; 64];
+		&new_key[0..32].copy_from_slice(&key);
+		&new_key[32..64].copy_from_slice(&nonce);
+
+		Self::from_secret_key(&new_key)
+	}
+
 	pub fn public_key(&self) -> [u8; PUBLIC_KEY_LEN] {
 		self.0.public.to_bytes()
 	}
@@ -78,6 +97,16 @@ impl Verifier {
 			.map_err(|_| "invalid signature")?;
 
 		Ok(result)
+	}
+}
+
+pub fn divide_scalar_bytes_by_cofactor(scalar: &mut [u8; 32]) {
+	let mut low = 0u8;
+	for i in scalar.iter_mut().rev() {
+		let r = *i & 0b00000111; // save remainder
+		*i >>= 3; // divide by 8
+		*i += low;
+		low = r << 5;
 	}
 }
 
@@ -114,6 +143,27 @@ mod tests {
 		let secret_key = key_pair.secret_key();
 
 		assert_eq!(hex::encode(&secret_key[..]), "bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b");
+	}
+
+	#[test]
+	fn test_from_lagacy_secret_key() {
+		let secret_key = hex::decode("58c0b29693f40b8869127b5a1e547a20a8a59ab70302271d1612d0cc740b2e5aac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408").unwrap();
+
+		let key_pair = KeyPair::from_legacy_secret_key(&secret_key).unwrap();
+
+		let public_key = key_pair.public_key();
+
+		assert_eq!(hex::encode(&public_key), "b03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209");
+
+		let secret_key = key_pair.secret_key();
+
+		assert_eq!(hex::encode(&secret_key[..]), "0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
+
+		let key_pair = KeyPair::from_secret_key(&secret_key).unwrap();
+
+		let public_key = key_pair.public_key();
+
+		assert_eq!(hex::encode(&public_key), "b03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209");
 	}
 
 	#[test]
