@@ -12,6 +12,8 @@ public class ErrorUtils {
         put((byte) 4, "invalid public key");
         put((byte) 5, "invalid signature");
         put((byte) 6, "jni error");
+        put((byte) 7, "invalid method");
+        put((byte) 8, "invalid tx");
     }};
 
     public static void checkErrorCode(byte code) throws SignerException {

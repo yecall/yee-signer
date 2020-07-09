@@ -12,6 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use jni::JNIEnv;
+use jni::sys::jbyteArray;
+use crate::SignerResult;
+
+pub fn error_result<R, T>(run: R, default: T, env: &JNIEnv, error: jbyteArray) -> T
+	where R: Fn() -> SignerResult<T>,
+{
+	match run() {
+		Ok(r) => r,
+		Err(e) => {
+			let _r = env.set_byte_array_region(error, 0, &[error_code(&e)]);
+			default
+		}
+	}
+}
+
 pub fn error_code(error: &str) -> i8 {
 	match error {
 		"invalid mini secret key" => 2,
@@ -19,6 +35,8 @@ pub fn error_code(error: &str) -> i8 {
 		"invalid public key" => 4,
 		"invalid signature" => 5,
 		"jni error" => 6,
+		"invalid method" => 7,
+		"invalid tx" => 8,
 		_ => 1,
 	}
 }
