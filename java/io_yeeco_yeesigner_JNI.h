@@ -79,6 +79,70 @@ JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verify
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verifierFree
   (JNIEnv *, jclass, jlong, jbyteArray);
 
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    buildCallBalanceTransfer
+ * Signature: ([BJ[B[B[B)J
+ */
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildCallBalanceTransfer
+  (JNIEnv *, jclass, jbyteArray, jlong, jbyteArray, jbyteArray, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    callFree
+ * Signature: (JII[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_callFree
+  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    buildTx
+ * Signature: ([BJJJ[BJII[B)J
+ */
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildTx
+  (JNIEnv *, jclass, jbyteArray, jlong, jlong, jlong, jbyteArray, jlong, jint, jint, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    txFree
+ * Signature: (JII[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_txFree
+  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    txLength
+ * Signature: (JII[B)J
+ */
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_txLength
+  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    txEncode
+ * Signature: (JII[B[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_txEncode
+  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    txDecode
+ * Signature: ([B[B[B[B)J
+ */
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_txDecode
+  (JNIEnv *, jclass, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    verifyTx
+ * Signature: (JII[B[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verifyTx
+  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray, jbyteArray);
+
 #ifdef __cplusplus
 }
 #endif

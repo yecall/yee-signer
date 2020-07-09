@@ -24,21 +24,22 @@ pub type Secret = [u8; SECRET_KEY_LEN];
 pub type Nonce = u64;
 pub type Hash = [u8; HASH_LEN];
 
-pub struct Address([u8; ADDRESS_LEN]);
+#[derive(Clone)]
+pub struct Address(pub [u8; ADDRESS_LEN]);
 
 pub struct Transaction<Params> {
 	pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
 	pub call: Call<Params>,
 }
 
-#[derive(Encode, Decode)]
+#[derive(Encode, Decode, Clone)]
 pub struct Call<Params> {
 	pub module: i8,
 	pub method: i8,
 	pub params: Params,
 }
 
-#[derive(Encode, Decode)]
+#[derive(Encode, Decode, Clone)]
 pub struct BalanceTransferParams {
 	pub dest: Address,
 	pub value: Compact<u128>,
