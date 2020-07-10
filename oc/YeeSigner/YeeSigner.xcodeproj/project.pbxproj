@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		264D059424B8074700C45ED9 /* Call.m in Sources */ = {isa = PBXBuildFile; fileRef = 264D059324B8074700C45ED9 /* Call.m */; };
+		264D059724B80D8100C45ED9 /* Transaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 264D059624B80D8100C45ED9 /* Transaction.m */; };
 		26DAD334249DD91C00E0ADB4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD333249DD91C00E0ADB4 /* AppDelegate.m */; };
 		26DAD337249DD91C00E0ADB4 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD336249DD91C00E0ADB4 /* SceneDelegate.m */; };
 		26DAD33A249DD91C00E0ADB4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DAD339249DD91C00E0ADB4 /* ViewController.m */; };
@@ -41,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		264D059224B8074700C45ED9 /* Call.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Call.h; sourceTree = "<group>"; };
+		264D059324B8074700C45ED9 /* Call.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Call.m; sourceTree = "<group>"; };
+		264D059524B80D8100C45ED9 /* Transaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transaction.h; sourceTree = "<group>"; };
+		264D059624B80D8100C45ED9 /* Transaction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Transaction.m; sourceTree = "<group>"; };
 		26DAD32F249DD91C00E0ADB4 /* YeeSigner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YeeSigner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26DAD332249DD91C00E0ADB4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		26DAD333249DD91C00E0ADB4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -177,6 +183,10 @@
 				26DAD37B249DFB0800E0ADB4 /* Verifier.m */,
 				26DAD380249DFF7000E0ADB4 /* ErrorUtils.h */,
 				26DAD381249DFF7000E0ADB4 /* ErrorUtils.m */,
+				264D059224B8074700C45ED9 /* Call.h */,
+				264D059324B8074700C45ED9 /* Call.m */,
+				264D059524B80D8100C45ED9 /* Transaction.h */,
+				264D059624B80D8100C45ED9 /* Transaction.m */,
 			);
 			path = YeeSigner;
 			sourceTree = "<group>";
@@ -314,10 +324,12 @@
 				26DAD33A249DD91C00E0ADB4 /* ViewController.m in Sources */,
 				26DAD379249DEA7E00E0ADB4 /* NSData+HexString.m in Sources */,
 				26DAD382249DFF7000E0ADB4 /* ErrorUtils.m in Sources */,
+				264D059424B8074700C45ED9 /* Call.m in Sources */,
 				26DAD334249DD91C00E0ADB4 /* AppDelegate.m in Sources */,
 				26DAD376249DE29200E0ADB4 /* KeyPair.m in Sources */,
 				26DAD37C249DFB0800E0ADB4 /* Verifier.m in Sources */,
 				26DAD345249DD91E00E0ADB4 /* main.m in Sources */,
+				264D059724B80D8100C45ED9 /* Transaction.m in Sources */,
 				26DAD337249DD91C00E0ADB4 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
