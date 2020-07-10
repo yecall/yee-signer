@@ -52,6 +52,8 @@ void yee_signer_sign(unsigned int *key_pair,
                      unsigned int message_len,
                      unsigned char *out,
                      unsigned int out_len,
+                     const unsigned char *ctx,
+                     unsigned int ctx_len,
                      unsigned int *_err);
 
 unsigned int *yee_signer_tx_decode(const unsigned char *raw,
@@ -88,6 +90,8 @@ void yee_signer_verify(unsigned int *verifier,
                        unsigned int signature_len,
                        const unsigned char *message,
                        unsigned int message_len,
+                       const unsigned char *ctx,
+                       unsigned int ctx_len,
                        unsigned int *err);
 
 void yee_signer_verify_tx(unsigned int *tx,

@@ -18,9 +18,9 @@ use std::ptr::null_mut;
 
 use crate::{KeyPair, Verifier, SignerResult, SECRET_KEY_LEN};
 use crate::error::error_result_ffi;
-use crate::tx::{method, build_tx, decode_tx_method, verify_tx};
+use crate::tx::{call, build_tx, decode_tx_method, verify_tx};
 use parity_codec::{Compact, Encode, Decode};
-use crate::tx::types::{BalanceTransferParams, ADDRESS_LEN, Address, Call, HASH_LEN, Transaction};
+use crate::tx::types::{ADDRESS_LEN, Address, Call, HASH_LEN, Transaction};
 use crate::tx::build_call;
 
 #[no_mangle]
@@ -86,14 +86,18 @@ pub extern "C" fn yee_signer_sign(key_pair: *mut c_uint,
 								  message_len: c_uint,
 								  out: *mut c_uchar,
 								  out_len: c_uint,
+								  ctx: *const c_uchar,
+								  ctx_len: c_uint,
 								  _err: *mut c_uint) {
 	let key_pair = key_pair as *mut KeyPair;
 	let key_pair = unsafe { Box::from_raw(key_pair) };
 
 	let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
 
+	let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
+
 	let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
-	let result = key_pair.sign(message);
+	let result = key_pair.sign(message, ctx);
 	out.copy_from_slice(&result);
 	std::mem::forget(key_pair);
 }
@@ -125,15 +129,18 @@ pub extern "C" fn yee_signer_verify(verifier: *mut c_uint,
 									signature_len: c_uint,
 									message: *const c_uchar,
 									message_len: c_uint,
+									ctx: *const c_uchar,
+									ctx_len: c_uint,
 									err: *mut c_uint) {
 	let verifier = verifier as *mut Verifier;
 	let verifier = unsafe { Box::from_raw(verifier) };
 
 	let signature = unsafe { slice::from_raw_parts(signature, signature_len as usize) };
 	let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
+	let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
 
 	let run = || -> SignerResult<()> {
-		verifier.verify(signature, message)?;
+		verifier.verify(signature, message, ctx)?;
 		Ok(())
 	};
 
@@ -154,7 +161,7 @@ pub extern "C" fn yee_signer_build_call_balance_transfer
 (dest: *const c_uchar, dest_len: c_uint, value: c_ulong, module_holder: *mut c_uint, method_holder: *mut c_uint, error: *mut c_uint) -> *mut c_uint {
 	let run = || -> SignerResult<*mut c_uint> {
 		let call = {
-			let (module, method) = (method::BALANCE, method::TRANSFER);
+			let (module, method) = (call::BALANCE, call::TRANSFER);
 			let dest = {
 				let mut tmp = [0u8; ADDRESS_LEN];
 				tmp.copy_from_slice(unsafe { slice::from_raw_parts(dest, dest_len as usize) });
@@ -163,7 +170,7 @@ pub extern "C" fn yee_signer_build_call_balance_transfer
 			let dest = Address(dest);
 			let value = Compact(value as u128);
 
-			let params = BalanceTransferParams {
+			let params = call::BalanceTransferParams {
 				dest,
 				value,
 			};
@@ -187,8 +194,8 @@ pub extern "C" fn yee_signer_call_free
 (call: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
 		let _call = match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				let call = call as *mut Call<BalanceTransferParams>;
+			(call::BALANCE, call::TRANSFER) => {
+				let call = call as *mut Call<call::BalanceTransferParams>;
 				let _call = unsafe { Box::from_raw(call) };
 			}
 			_ => return Err("invalid method".to_string()),
@@ -221,8 +228,8 @@ pub extern "C" fn yee_signer_build_tx
 		};
 
 		let tx = match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				let call = unsafe { Box::from_raw(call as *mut Call<BalanceTransferParams>) };
+			(call::BALANCE, call::TRANSFER) => {
+				let call = unsafe { Box::from_raw(call as *mut Call<call::BalanceTransferParams>) };
 				let call_clone = *call.clone();
 				std::mem::forget(call);
 				let tx = build_tx(secret_key, nonce, period, current, current_hash, call_clone)?;
@@ -243,8 +250,8 @@ pub extern "C" fn yee_signer_tx_free
 (tx: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
 		let _tx = match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) }
+			(call::BALANCE, call::TRANSFER) => {
+				unsafe { Box::from_raw(tx as *mut Transaction<call::BalanceTransferParams>) }
 			}
 			_ => return Err("invalid method".to_string()),
 		};
@@ -259,8 +266,8 @@ pub extern "C" fn yee_signer_tx_length
 (tx: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) -> c_uint {
 	let run = || -> SignerResult<c_uint> {
 		let len = match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				let tx = unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) };
+			(call::BALANCE, call::TRANSFER) => {
+				let tx = unsafe { Box::from_raw(tx as *mut Transaction<call::BalanceTransferParams>) };
 				let len = tx.encode().len();
 				std::mem::forget(tx);
 				len
@@ -278,8 +285,8 @@ pub extern "C" fn yee_signer_tx_encode
 (tx: *mut c_uint, module: c_uint, method: c_uint, buffer: *mut c_uchar, buffer_len: c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
 		match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				let tx = unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) };
+			(call::BALANCE, call::TRANSFER) => {
+				let tx = unsafe { Box::from_raw(tx as *mut Transaction<call::BalanceTransferParams>) };
 				let encode = (*tx).encode();
 				let buffer = unsafe { slice::from_raw_parts_mut(buffer, buffer_len as usize) };
 				buffer.copy_from_slice(&encode);
@@ -301,11 +308,11 @@ pub extern "C" fn yee_signer_tx_decode
 		let (module, method) = decode_tx_method(raw)?;
 
 		let tx = match (module, method) {
-			(method::BALANCE, method::TRANSFER) => {
+			(call::BALANCE, call::TRANSFER) => {
 				unsafe { *module_holder = module as c_uint };
 				unsafe { *method_holder = method as c_uint };
 
-				let tx: Transaction<BalanceTransferParams> = Decode::decode(&mut &raw[..]).ok_or("invalid tx")?;
+				let tx: Transaction<call::BalanceTransferParams> = Decode::decode(&mut &raw[..]).ok_or("invalid tx")?;
 				let a = Box::into_raw(Box::new(tx));
 				a
 			}
@@ -329,8 +336,8 @@ pub extern "C" fn yee_signer_verify_tx
 		};
 
 		match (module as u8, method as u8) {
-			(method::BALANCE, method::TRANSFER) => {
-				let tx = unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) };
+			(call::BALANCE, call::TRANSFER) => {
+				let tx = unsafe { Box::from_raw(tx as *mut Transaction<call::BalanceTransferParams>) };
 				let verified = verify_tx(&tx, &current_hash);
 				std::mem::forget(tx);
 				verified?

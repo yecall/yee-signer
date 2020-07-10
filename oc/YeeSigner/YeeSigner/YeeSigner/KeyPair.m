@@ -79,11 +79,12 @@ const unsigned int SIGNATURE_LENGTH = 64;
     return data;
 }
 
-- (NSData *) sign: (NSData *)message error:(NSError **)error{
+- (NSData *) sign: (NSData *)message ctx: (NSData *)ctx error:(NSError **)error{
     
     unsigned int err = 0;
     unsigned char result[SIGNATURE_LENGTH];
-    yee_signer_sign(self.pointer, message.bytes, (unsigned int)message.length, result, SIGNATURE_LENGTH, &err);
+    yee_signer_sign(self.pointer, message.bytes, (unsigned int)message.length,
+                    result, SIGNATURE_LENGTH, ctx.bytes, (unsigned int)ctx.length, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;

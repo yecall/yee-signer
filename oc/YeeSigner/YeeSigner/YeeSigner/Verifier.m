@@ -31,10 +31,10 @@
     return verifier;
 }
 
-- (BOOL) verify: (NSData *)signature message: (NSData *) message error:(NSError **)error{
+- (BOOL) verify: (NSData *)signature message: (NSData *) message ctx: (NSData *) ctx error:(NSError **)error{
     
     unsigned int err = 0;
-    yee_signer_verify(self.pointer, signature.bytes, (unsigned int)signature.length, message.bytes, (unsigned int)message.length, &err);
+    yee_signer_verify(self.pointer, signature.bytes, (unsigned int)signature.length, message.bytes, (unsigned int)message.length, ctx.bytes, (unsigned int) ctx.length, &err);
     return err == 0 ? YES : NO;
 }
 

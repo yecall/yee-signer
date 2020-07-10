@@ -16,11 +16,13 @@ use parity_codec::{Compact, Decode, Input};
 use parity_codec::Encode;
 use rust_crypto::blake2b;
 
-
 use crate::{KeyPair, SignerResult, PUBLIC_KEY_LEN, Verifier};
 use crate::tx::types::{address_from_public, Call, Era, Hash, HASH_LEN, Nonce, Secret, Transaction, Address, Signature};
 
 pub mod types;
+pub mod call;
+
+const CTX: &[u8] = b"substrate";
 
 pub fn build_call<Params>(module: u8, method: u8, params: Params) -> Call<Params>
 {
@@ -44,9 +46,9 @@ pub fn build_tx<Params>(secret_key: Secret, nonce: Nonce, period: u64, current: 
 	let raw_payload = (&nonce, &call, &era, &current_hash);
 	let signature = raw_payload.using_encoded(|payload| {
 		if payload.len() > 256 {
-			key_pair.sign(&blake2b_256(payload))
+			key_pair.sign(&blake2b_256(payload), CTX)
 		} else {
-			key_pair.sign(payload)
+			key_pair.sign(payload, CTX)
 		}
 	});
 
@@ -59,7 +61,6 @@ pub fn build_tx<Params>(secret_key: Secret, nonce: Nonce, period: u64, current: 
 }
 
 pub fn decode_tx_method(raw: &[u8]) -> SignerResult<(u8, u8)> {
-
 	let input = &mut &raw[..];
 
 	let _length_do_not_remove_me_see_above: Vec<()> = Decode::decode(input).ok_or("invalid tx")?;
@@ -79,7 +80,6 @@ pub fn decode_tx_method(raw: &[u8]) -> SignerResult<(u8, u8)> {
 	};
 
 	Ok((a.call.0 as u8, a.call.1 as u8))
-
 }
 
 pub fn verify_tx<Params>(tx: &Transaction<Params>, current_hash: &Hash) -> SignerResult<()>
@@ -102,17 +102,12 @@ pub fn verify_tx<Params>(tx: &Transaction<Params>, current_hash: &Hash) -> Signe
 
 	let verified = raw_payload.using_encoded(|payload| {
 		if payload.len() > 256 {
-			verifier.verify(&signature[..], &blake2b_256(payload))
+			verifier.verify(&signature[..], &blake2b_256(payload), CTX)
 		} else {
-			verifier.verify(&signature[..], &payload)
+			verifier.verify(&signature[..], &payload, CTX)
 		}
 	});
 	verified
-}
-
-pub mod method {
-	pub const BALANCE: u8 = 0x04;
-	pub const TRANSFER: u8 = 0x00;
 }
 
 fn blake2b_256(data: &[u8]) -> Hash {
@@ -128,8 +123,7 @@ mod tests {
 	use crate::SECRET_KEY_LEN;
 
 	use super::*;
-	use crate::tx::types::BalanceTransferParams;
-	use crate::tx::method::{BALANCE, TRANSFER};
+	use crate::tx::call::{BALANCE, TRANSFER, BalanceTransferParams};
 
 	#[test]
 	fn test_build_tx() {
@@ -138,7 +132,7 @@ mod tests {
 			value: Compact(1000),
 		};
 
-		let call = build_call(4, 0, balance_transfer_params);
+		let call = build_call(call::BALANCE, call::TRANSFER, balance_transfer_params);
 
 		let secret_key = {
 			let secret_key = hex::decode("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408").unwrap();

@@ -39,12 +39,6 @@ pub struct Call<Params> {
 	pub params: Params,
 }
 
-#[derive(Encode, Decode, Clone)]
-pub struct BalanceTransferParams {
-	pub dest: Address,
-	pub value: Compact<u128>,
-}
-
 pub fn address_from_public(public_key: &[u8]) -> Address {
 	let mut address = [0; ADDRESS_LEN];
 	address[0] = 0xff;

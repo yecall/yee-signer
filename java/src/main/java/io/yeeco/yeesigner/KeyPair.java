@@ -49,10 +49,10 @@ public class KeyPair {
         return secretKey;
     }
 
-    public byte[] sign(byte[] message) throws SignerException {
+    public byte[] sign(byte[] message, byte[] ctx) throws SignerException {
         byte[] signature = new byte[SIGNATURE_KEY_LENGTH];
         byte[] error = new byte[1];
-        JNI.sign(pointer, message, signature, error);
+        JNI.sign(pointer, message, signature, ctx, error);
         ErrorUtils.checkErrorCode(error[0]);
 
         return signature;

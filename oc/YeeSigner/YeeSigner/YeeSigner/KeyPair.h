@@ -18,7 +18,7 @@
 
 - (NSData *) secretKey:(NSError **)error;
 
-- (NSData *) sign: (NSData *)message error:(NSError **)error;
+- (NSData *) sign: (NSData *)message ctx: (NSData *)ctx error:(NSError **)error;
 
 - (void) free:(NSError **)error;
 

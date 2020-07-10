@@ -10,7 +10,7 @@ edition = "2018"
 crate-type = ["cdylib", "rlib", "staticlib"]
 
 [dependencies]
-schnorrkel = "0.8.5"
+schnorrkel = "0.1.1"
 jni = "0.16.0"
 parity-codec = { version = "=3.2", features = ["derive"] }
 rust_crypto = { version = "0.2.36", package = "rust-crypto" }
