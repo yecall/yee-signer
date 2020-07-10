@@ -130,5 +130,38 @@ byte[] encode = tx.encode();
 ```
 
 #### Objective C
+```objective-c
+NSError* error = nil;
+    
+// transfer dest address: 33 bytes, 0xFF + public key
+NSData* dest = [NSData fromHex:@"FF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70"];
 
-TODO
+// transfer value
+u_long value = 1000;
+Call* call = [Call buildCallBalanceTransfer:dest value:value error:&error];
+
+// sender secret key: 64 bytes
+NSData* secretKey = [NSData fromHex:@"0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408"];
+
+// sender nonce
+u_long nonce = 0;
+
+// era period: use 64
+u_long period = 64;
+
+// era current: the block number of the best block
+u_long current = 26491;
+
+// era current hash: the block hash of the best block
+NSData* currentHash = [NSData fromHex:@"c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13"];
+
+Transaction* tx = [Transaction buildTx:secretKey nonce:nonce period:period current:current current_hash:currentHash call:call error:&error];
+
+// get the raw tx
+NSData* encode = [tx encode: &error];
+
+[call free: &error];
+
+[tx free: &error];
+
+```

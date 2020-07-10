@@ -45,7 +45,7 @@ public class TxTest {
         Call call = Call.newBalanceTransferCall(dest, value);
 
         // sender secret key
-        byte[] secret_key = Hex.decodeHex("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
+        byte[] secretKey = Hex.decodeHex("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
 
         // sender nonce
         long nonce = 0;
@@ -57,9 +57,9 @@ public class TxTest {
         long current = 26491;
 
         // era current hash: the block hash of the best block
-        byte[] current_hash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
+        byte[] currentHash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
 
-        Tx tx = Tx.buildTx(secret_key, nonce, period, current, current_hash, call);
+        Tx tx = Tx.buildTx(secretKey, nonce, period, current, currentHash, call);
 
         // get the raw tx
         byte[] encode = tx.encode();
@@ -83,9 +83,9 @@ public class TxTest {
         assertEquals(tx.getModule(), 4);
         assertEquals(tx.getMethod(), 0);
 
-        byte[] current_hash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
+        byte[] currentHash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
 
-        tx.verify(current_hash);
+        tx.verify(currentHash);
 
     }
 
@@ -99,11 +99,11 @@ public class TxTest {
         assertEquals(tx.getModule(), 4);
         assertEquals(tx.getMethod(), 0);
 
-        byte[] current_hash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe14");
+        byte[] currentHash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe14");
 
         boolean ok = true;
         try {
-            tx.verify(current_hash);
+            tx.verify(currentHash);
         }catch (Exception e){
             ok = false;
         }

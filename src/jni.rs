@@ -18,7 +18,7 @@ use jni::sys::jbyteArray;
 use jni::sys::{jlong, jint};
 
 use crate::{KeyPair, Verifier, SignerResult, SECRET_KEY_LEN};
-use crate::error::error_result;
+use crate::error::error_result_jni;
 use crate::tx::{build_tx, method, build_call, verify_tx, decode_tx_method};
 use crate::tx::types::{ADDRESS_LEN, BalanceTransferParams, Address, HASH_LEN, Call, Transaction};
 use parity_codec::{Compact, Encode, Decode};
@@ -37,7 +37,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_keyPairFromMiniSecretKey
 		Ok(a as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -53,7 +53,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_keyPairFromSecretKey
 		Ok(a as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -69,7 +69,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_publicKey
 		Ok(())
 	};
 
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 
 	std::mem::forget(key_pair);
 }
@@ -86,7 +86,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_secretKey
 		env.set_byte_array_region(secret_key, 0, &secret_key_result).map_err(|_| "jni error")?;
 		Ok(())
 	};
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 
 	std::mem::forget(key_pair);
 }
@@ -104,7 +104,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_sign
 		env.set_byte_array_region(signature, 0, &signature_result).map_err(|_| "jni error")?;
 		Ok(())
 	};
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 
 	std::mem::forget(key_pair);
 }
@@ -128,7 +128,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_verifierFromPublicKey
 		Ok(a as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -145,7 +145,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_verify
 
 		Ok(())
 	};
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 
 	std::mem::forget(verifier);
 }
@@ -186,7 +186,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_buildCallBalanceTransfer
 		Ok(call as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -195,14 +195,14 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_callFree
 	let run = || -> SignerResult<()> {
 		let _call = match (module as u8, method as u8) {
 			(method::BALANCE, method::TRANSFER) => {
-				unsafe { Box::from_raw(call as *mut BalanceTransferParams) }
+				unsafe { Box::from_raw(call as *mut Call<BalanceTransferParams>) }
 			}
 			_ => return Err("invalid method".to_string()),
 		};
 		Ok(())
 	};
 
-	error_result(run, (), &env, error)
+	error_result_jni(run, (), &env, error)
 }
 
 #[no_mangle]
@@ -229,8 +229,9 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_buildTx
 		let tx = match (module as u8, method as u8) {
 			(method::BALANCE, method::TRANSFER) => {
 				let call = unsafe { Box::from_raw(call as *mut Call<BalanceTransferParams>) };
-				let tx = build_tx(secret_key, nonce, period, current, current_hash, *call.clone())?;
+				let call_clone = *call.clone();
 				std::mem::forget(call);
+				let tx = build_tx(secret_key, nonce, period, current, current_hash, call_clone)?;
 				let a = Box::into_raw(Box::new(tx));
 				a
 			}
@@ -240,7 +241,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_buildTx
 		Ok(tx as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -256,7 +257,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_txFree
 		Ok(())
 	};
 
-	error_result(run, (), &env, error)
+	error_result_jni(run, (), &env, error)
 }
 
 #[no_mangle]
@@ -275,7 +276,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_txLength
 		Ok(len as i64)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -286,15 +287,15 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_txEncode
 			(method::BALANCE, method::TRANSFER) => {
 				let tx = unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) };
 				let encode = (*tx).encode().iter().map(|x| *x as i8).collect::<Vec<_>>();
-				env.set_byte_array_region(buffer, 0, &encode).map_err(|_| "jni error")?;
 				std::mem::forget(tx);
+				env.set_byte_array_region(buffer, 0, &encode).map_err(|_| "jni error")?;
 			}
 			_ => return Err("invalid method".to_string()),
 		};
 		Ok(())
 	};
 
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 }
 
 #[no_mangle]
@@ -318,7 +319,7 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_txDecode
 		Ok(tx as jlong)
 	};
 
-	error_result(run, 0, &env, error)
+	error_result_jni(run, 0, &env, error)
 }
 
 #[no_mangle]
@@ -335,13 +336,14 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_verifyTx
 		match (module as u8, method as u8) {
 			(method::BALANCE, method::TRANSFER) => {
 				let tx = unsafe { Box::from_raw(tx as *mut Transaction<BalanceTransferParams>) };
-				verify_tx(&tx, &current_hash)?;
+				let verified = verify_tx(&tx, &current_hash);
 				std::mem::forget(tx);
+				verified?
 			}
 			_ => return Err("invalid method".to_string()),
 		};
 		Ok(())
 	};
 
-	error_result(run, (), &env, error);
+	error_result_jni(run, (), &env, error);
 }

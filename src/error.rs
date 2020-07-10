@@ -15,14 +15,27 @@
 use jni::JNIEnv;
 use jni::sys::jbyteArray;
 use crate::SignerResult;
+use std::os::raw::c_uint;
 
-pub fn error_result<R, T>(run: R, default: T, env: &JNIEnv, error: jbyteArray) -> T
+pub fn error_result_jni<R, T>(run: R, default: T, env: &JNIEnv, error: jbyteArray) -> T
 	where R: Fn() -> SignerResult<T>,
 {
 	match run() {
 		Ok(r) => r,
 		Err(e) => {
 			let _r = env.set_byte_array_region(error, 0, &[error_code(&e)]);
+			default
+		}
+	}
+}
+
+pub fn error_result_ffi<R, T>(run: R, default: T, err: *mut c_uint) -> T
+	where R: Fn() -> SignerResult<T>,
+{
+	match run() {
+		Ok(r) => r,
+		Err(e) => {
+			unsafe { *err = error_code(&e) as c_uint };
 			default
 		}
 	}
