@@ -20,7 +20,7 @@ public class JNI {
 
     public native static void verifierFree(long verifier, byte[] error);
 
-    public native static long buildCallBalanceTransfer(byte[] dest, long value, byte[] module, byte[] method, byte[] error);
+    public native static long buildCall(int module, int method, byte[] params, byte[] error);
 
     public native static void callFree(long call, int module, int method, byte[] error);
 

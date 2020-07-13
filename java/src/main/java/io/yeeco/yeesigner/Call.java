@@ -6,18 +6,16 @@ public class Call {
     private int module;
     private int method;
 
-    public static Call newBalanceTransferCall(byte[] dest, long value) throws SignerException {
+    public static Call newCall(int module, int method, String params) throws SignerException {
 
         byte[] error = new byte[1];
-        byte[] module = new byte[1];
-        byte[] method = new byte[1];
-        long pointer = JNI.buildCallBalanceTransfer(dest, value, module, method, error);
+        long pointer = JNI.buildCall(module, method, params.getBytes(), error);
         ErrorUtils.checkErrorCode(error[0]);
 
         Call instance = new Call();
         instance.pointer = pointer;
-        instance.module = module[0];
-        instance.method = method[0];
+        instance.module = module;
+        instance.method = method;
         return instance;
     }
 

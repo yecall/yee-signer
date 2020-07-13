@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with YeeChain.  If not, see <https://www.gnu.org/licenses/>.
 
+use schnorrkel::{MiniSecretKey, PublicKey, SecretKey};
+use schnorrkel::Keypair as SrKeyPair;
+
 pub mod ffi;
 pub mod jni;
 pub mod tx;
 
+mod export;
 mod error;
-
-use schnorrkel::{PublicKey, MiniSecretKey, SecretKey};
-use schnorrkel::Keypair as SrKeyPair;
 
 pub struct KeyPair(SrKeyPair);
 
@@ -58,7 +59,7 @@ impl KeyPair {
 	}
 
 	pub fn sign(&self, message: &[u8], ctx: &[u8]) -> [u8; SIGNATURE_LENGTH] {
-		let ctx = unsafe {std::mem::transmute::<&[u8], &'static [u8]>(ctx)};
+		let ctx = unsafe { std::mem::transmute::<&[u8], &'static [u8]>(ctx) };
 		let signature = self.0.sign_simple(ctx, &message);
 		signature.to_bytes()
 	}
@@ -74,11 +75,11 @@ impl Verifier {
 	pub fn verify(&self, signature: &[u8], message: &[u8], ctx: &[u8]) -> SignerResult<()> {
 		let signature = schnorrkel::Signature::from_bytes(&signature).map_err(|_| "invalid signature")?;
 
-		let ctx = unsafe {std::mem::transmute::<&[u8], &'static [u8]>(ctx)};
+		let ctx = unsafe { std::mem::transmute::<&[u8], &'static [u8]>(ctx) };
 		let result = self.0
 			.verify_simple(ctx, &message, &signature);
 
-		let result = match result{
+		let result = match result {
 			true => (),
 			false => return Err("invalid signature".to_string()),
 		};

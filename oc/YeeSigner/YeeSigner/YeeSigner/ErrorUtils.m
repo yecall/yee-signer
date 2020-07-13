@@ -17,6 +17,10 @@
         @3: @"invalid secret key",
         @4: @"invalid public key",
         @5: @"invalid signature",
+        @6: @"jni error",
+        @7: @"invalid method",
+        @8: @"invalid tx",
+        @9: @"invalid params",
     };
     
     NSString *message = [dict objectForKey:@(err)];

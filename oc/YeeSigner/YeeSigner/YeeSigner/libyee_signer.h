@@ -3,12 +3,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-unsigned int *yee_signer_build_call_balance_transfer(const unsigned char *dest,
-                                                     unsigned int dest_len,
-                                                     unsigned long value,
-                                                     unsigned int *module_holder,
-                                                     unsigned int *method_holder,
-                                                     unsigned int *error);
+unsigned int *yee_signer_build_call(unsigned int module,
+                                    unsigned int method,
+                                    const unsigned char *params,
+                                    unsigned int params_len,
+                                    unsigned int *error);
 
 unsigned int *yee_signer_build_tx(const unsigned char *secret_key,
                                   unsigned int secret_key_len,

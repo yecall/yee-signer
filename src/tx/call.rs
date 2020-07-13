@@ -13,7 +13,10 @@
 // limitations under the License.
 
 
-use parity_codec::{Compact, Encode, Decode};
+use parity_codec::{Compact, Decode, Encode};
+use serde::{Deserialize, Serialize};
+
+use crate::tx::serde::SerdeHex;
 use crate::tx::types::{Address, Public};
 
 pub const BALANCE: u8 = 0x04;
@@ -22,23 +25,31 @@ pub const TRANSFER: u8 = 0x00;
 pub const CRFG: u8 = 0x06;
 pub const FORCE_UPDATE_AUTHORITIES: u8 = 0x01;
 
-pub const SUDO: u8 = 0x11;
+pub const SUDO: u8 = 0x0b;
 pub const SUDO_SUDO: u8 = 0x00;
 pub const SUDO_SET_KEY: u8 = 0x01;
 
-#[derive(Encode, Decode, Clone)]
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
+pub struct AuthorityId(#[serde(with="SerdeHex")] pub Public);
+
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
 pub struct BalanceTransferParams {
 	pub dest: Address,
 	pub value: Compact<u128>,
 }
 
-#[derive(Encode, Decode, Clone)]
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
 pub struct CrfgForceUpdateAuthoritiesParams {
-	pub authorities: Vec<(Public, u64)>,
+	pub authorities: Vec<(AuthorityId, u64)>,
 	pub median: u64,
 }
 
-#[derive(Encode, Decode, Clone)]
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
+pub struct SudoSudoParams<Call> {
+	pub proposal: Call,
+}
+
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
 pub struct SudoSetKeyParams {
-	pub address: Address,
+	pub addresses: Vec<Address>,
 }

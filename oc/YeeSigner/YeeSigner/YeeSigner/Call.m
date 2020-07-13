@@ -16,13 +16,13 @@
 
 @implementation Call
 
-+ (Call *) buildCallBalanceTransfer:(NSData* ) address value:(u_long) value error:(NSError **) error {
++ (Call *) buildCall:(u_int)module method:(u_int)method params:(NSString* ) params error:(NSError **) error{
     
-    unsigned int module_holder = 0;
-    unsigned int method_holder = 0;
+    NSData* paramsData = [params dataUsingEncoding:NSUTF8StringEncoding];
+
     unsigned int err = 0;
     
-    unsigned int* pointer = yee_signer_build_call_balance_transfer(address.bytes, (unsigned int)address.length, value, &module_holder, &method_holder, &err);
+    unsigned int* pointer = yee_signer_build_call(module, method, paramsData.bytes, (unsigned int)paramsData.length, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
@@ -30,10 +30,9 @@
     
     Call* call = [Call alloc];
     call.pointer = pointer;
-    call.module = module_holder;
-    call.method = method_holder;
+    call.module = module;
+    call.method = method;
     return call;
-    
 }
 
 - (void) free:(NSError **)error {

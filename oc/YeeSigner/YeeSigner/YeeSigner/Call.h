@@ -16,7 +16,7 @@
 
 @property (nonatomic) unsigned int method;
 
-+ (Call *) buildCallBalanceTransfer:(NSData* ) address value:(u_long) value error:(NSError **) error;
++ (Call *) buildCall:(u_int)module method:(u_int)method params:(NSString* ) params error:(NSError **) error;
 
 - (void) free:(NSError **)error;
 
