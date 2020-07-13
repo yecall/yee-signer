@@ -16,9 +16,9 @@ public class Verifier {
     }
 
 
-    public void verify(byte[] signature, byte[] message) throws SignerException {
+    public void verify(byte[] signature, byte[] message, byte[] ctx) throws SignerException {
         byte[] error = new byte[1];
-        JNI.verify(pointer, signature, message, error);
+        JNI.verify(pointer, signature, message, ctx, error);
         ErrorUtils.checkErrorCode(error[0]);
     }
 

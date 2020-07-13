@@ -12,7 +12,7 @@
 
 + (Verifier *) fromPublicKey:(NSData* ) publicKey error:(NSError **)error;
 
-- (BOOL) verify: (NSData *)signature message: (NSData *) message error:(NSError **)error;
+- (BOOL) verify: (NSData *)signature message: (NSData *) message ctx: (NSData *)ctx error:(NSError **)error;
 
 - (void) free:(NSError **)error;
 

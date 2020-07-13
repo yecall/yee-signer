@@ -36,10 +36,14 @@
     
     [self testBuildTx];
     
+    [self testBuildTx2];
+
     [self testVerifyTx];
     
+    [self testVerifyTx2];
+
     [self testVerifyTxFail];
-    
+
 }
 
 - (void)testFromMiniSecretKey {
@@ -56,7 +60,7 @@
     
     NSData *secretKey = [keyPair secretKey:&error];
             
-    NSAssert([[secretKey toHex] isEqualToString:@"bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"], @"");
+    NSAssert([[secretKey toHex] isEqualToString:@"e08d5baee7dae0f0463994503b812677c9523bce7653f724a59d28cf35581f73cd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"], @"");
     
     [keyPair free:&error];
     
@@ -77,7 +81,7 @@
 
 - (void)testFromSecretKey {
     NSError* error = nil;
-    NSData* secretKey = [NSData fromHex:@"bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
+    NSData* secretKey = [NSData fromHex:@"e08d5baee7dae0f0463994503b812677c9523bce7653f724a59d28cf35581f73cd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
     
     KeyPair* keyPair = [KeyPair fromSecretKey:secretKey error:&error];
     
@@ -87,14 +91,14 @@
     
     NSData *secretKey2 = [keyPair secretKey:&error];
             
-    NSAssert([[secretKey2 toHex] isEqualToString:@"bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"], @"");
+    NSAssert([[secretKey2 toHex] isEqualToString:@"e08d5baee7dae0f0463994503b812677c9523bce7653f724a59d28cf35581f73cd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"], @"");
     
     [keyPair free:&error];
 }
 
 - (void)testVerify {
     NSError* error = nil;
-    NSData* secretKey = [NSData fromHex:@"bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
+    NSData* secretKey = [NSData fromHex:@"e08d5baee7dae0f0463994503b812677c9523bce7653f724a59d28cf35581f73cd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
     
     KeyPair* keyPair = [KeyPair fromSecretKey:secretKey error:&error];
     
@@ -104,9 +108,11 @@
         
     NSData *message = [NSData fromHex:@"010203"];
     
-    NSData *signature = [keyPair sign:message error:&error];
+    NSData *ctx = [NSData fromHex:@""];
     
-    BOOL ok = [verifier verify:signature message:message error:&error];
+    NSData *signature = [keyPair sign:message ctx:ctx error:&error];
+    
+    BOOL ok = [verifier verify:signature message:message ctx:ctx error:&error];
     
     NSAssert(ok, @"");
     
@@ -118,7 +124,7 @@
 
 - (void)testVerifyFail {
     NSError* error = nil;
-    NSData* secretKey = [NSData fromHex:@"bc71cbf55c1b1cde2887126a27d0e42e596ac7d96eea9ea4b413e5b906eb630ecd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
+    NSData* secretKey = [NSData fromHex:@"e08d5baee7dae0f0463994503b812677c9523bce7653f724a59d28cf35581f73cd859d888ab8f09aa0ff3b1075e0c1629cd491433e00dfb07e5a154312cc7d9b"];
     
     KeyPair* keyPair = [KeyPair fromSecretKey:secretKey error:&error];
     
@@ -130,7 +136,9 @@
     
     NSData *signature = [NSData fromHex:@"010203"];
     
-    BOOL ok = [verifier verify:signature message:message error:&error];
+    NSData *ctx = [NSData fromHex:@""];
+    
+    BOOL ok = [verifier verify:signature message:message ctx:ctx error:&error];
     
     NSAssert(!ok, @"");
     
@@ -144,13 +152,12 @@
     
     NSError* error = nil;
     
-    // transfer dest address: 33 bytes, 0xFF + public key
-    NSData* dest = [NSData fromHex:@"FF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70"];
-
-    // transfer value
-    u_long value = 1000;
-    Call* call = [Call buildCallBalanceTransfer:dest value:value error:&error];
-
+    // params json
+    // dest:  address: 33 bytes, 0xFF + public key
+    // value: transfer value
+    NSString *params = @"{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}";
+    Call* call = [Call buildCall:4 method:0 params:params error:&error];
+    
     // sender secret key
     NSData* secretKey = [NSData fromHex:@"0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408"];
 
@@ -184,11 +191,55 @@
     
 }
 
+- (void)testBuildTx2 {
+    
+    NSError* error = nil;
+    
+    // params json
+    // addresses: array of address: 33 bytes, 0xFF + public key
+
+    NSString *params = @"{\"addresses\":[\"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c\"]}";
+    
+    Call* call = [Call buildCall:11 method:1 params:params error:&error];
+    
+    // sender secret key
+    NSData* secretKey = [NSData fromHex:@"0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408"];
+
+    // sender nonce
+    u_long nonce = 0;
+
+    // era period: use 64
+    u_long period = 64;
+
+    // era current: the block number of the best block
+    u_long current = 26491;
+
+    // era current hash: the block hash of the best block
+    NSData* currentHash = [NSData fromHex:@"c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13"];
+
+    Transaction* tx = [Transaction buildTx:secretKey nonce:nonce period:period current:current current_hash:currentHash call:call error:&error];
+    
+    // get the raw tx
+    NSData* encode = [tx encode: &error];
+
+    NSAssert(call.module == 11, @"");
+    NSAssert(call.method == 1, @"");
+
+    NSAssert(encode.length == 139, @"");
+    
+//    NSLog(@"%@", [encode toHex]);
+    
+    [call free: &error];
+    
+    [tx free: &error];
+    
+}
+
  - (void) testVerifyTx {
      
     NSError* error = nil;
     
-    NSData* raw = [NSData fromHex:@"290281ffb03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209168247df3d0a8f0a33da4b86c1de80dc53ab9fe46ae9289fece568e0cc8b2a4383b250e09211171646ff396ae201855ced3361e7f8551dba4a1b5434c28c8d8800b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f"];
+    NSData* raw = [NSData fromHex:@"290281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726f2675f1d0fc18853845f59c012cdfecd10134d6c9312ed5cd0f64908f2c0b1439b996384b5ada3f8db54517d81bb0d07aa6cf101703d23d4a50222b791741110600b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f"];
 
     Transaction* tx = [Transaction decode: raw error:&error];
 
@@ -205,11 +256,32 @@
     
 }
 
+- (void) testVerifyTx2 {
+     
+    NSError* error = nil;
+    
+    NSData* raw = [NSData fromHex:@"250281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726fa2dc5a9760131feac59cfc07312f7e65836ffcc9dbeeff0c96ae380d45a3a21c484d0cf3d371abba5d74dccd5dae6f893ca1f5b57a9b210b5d23d1687f92b10900b5030b0104ffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c"];
+
+    Transaction* tx = [Transaction decode: raw error:&error];
+
+    NSAssert(tx.module == 11, @"");
+    NSAssert(tx.method == 1, @"");
+     
+    NSData* currentHash = [NSData fromHex:@"c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13"];
+
+    BOOL verified = [tx verify:currentHash error:&error];
+    
+    NSAssert(verified, @"");
+     
+    [tx free: &error];
+    
+}
+
 - (void) testVerifyTxFail {
      
     NSError* error = nil;
     
-    NSData* raw = [NSData fromHex:@"290281ffb03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209168247df3d0a8f0a33da4b86c1de80dc53ab9fe46ae9289fece568e0cc8b2a4383b250e09211171646ff396ae201855ced3361e7f8551dba4a1b5434c28c8d8800b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f"];
+    NSData* raw = [NSData fromHex:@"290281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726f2675f1d0fc18853845f59c012cdfecd10134d6c9312ed5cd0f64908f2c0b1439b996384b5ada3f8db54517d81bb0d07aa6cf101703d23d4a50222b791741110600b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f"];
 
     Transaction* tx = [Transaction decode: raw error:&error];
 

@@ -50,6 +50,7 @@ pub fn error_code(error: &str) -> i8 {
 		"jni error" => 6,
 		"invalid method" => 7,
 		"invalid tx" => 8,
+		"invalid params" => 9,
 		_ => 1,
 	}
 }

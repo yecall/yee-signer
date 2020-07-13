@@ -42,10 +42,10 @@ JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_secretKey
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    sign
- * Signature: (J[B[B[B)V
+ * Signature: (J[B[B[B[B)V
  */
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_sign
-  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
@@ -66,10 +66,10 @@ JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_verifierFromPublicKey
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    verify
- * Signature: (J[B[B[B)V
+ * Signature: (J[B[B[B[B)V
  */
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verify
-  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
@@ -81,11 +81,11 @@ JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verifierFree
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
- * Method:    buildCallBalanceTransfer
- * Signature: ([BJ[B[B[B)J
+ * Method:    buildCall
+ * Signature: (II[B[B)J
  */
-JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildCallBalanceTransfer
-  (JNIEnv *, jclass, jbyteArray, jlong, jbyteArray, jbyteArray, jbyteArray);
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildCall
+  (JNIEnv *, jclass, jint, jint, jbyteArray, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI

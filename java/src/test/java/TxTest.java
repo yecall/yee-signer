@@ -37,12 +37,11 @@ public class TxTest {
     @Test
     public void testBuildTx() throws Exception {
 
-        // transfer dest address: 33 bytes, 0xFF + public key
-        byte[] dest = Hex.decodeHex("FF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70");
-
-        // transfer value
-        long value = 1000;
-        Call call = Call.newBalanceTransferCall(dest, value);
+        // params json
+        // dest:  address: 33 bytes, 0xFF + public key
+        // value: transfer value
+        String params = "{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}";
+        Call call = Call.newCall(4, 0, params);
 
         // sender secret key
         byte[] secretKey = Hex.decodeHex("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
@@ -64,7 +63,7 @@ public class TxTest {
         // get the raw tx
         byte[] encode = tx.encode();
 
-        //System.out.println(Hex.encodeHexString(encode));
+        System.out.println(Hex.encodeHexString(encode));
 
         assertEquals(call.getModule(), 4);
         assertEquals(call.getMethod(), 0);
@@ -74,9 +73,47 @@ public class TxTest {
     }
 
     @Test
+    public void testBuildTx2() throws Exception {
+
+        // params json
+        // addresses: array of address: 33 bytes, 0xFF + public key
+
+        String params = "{\"addresses\":[\"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c\"]}";
+        Call call = Call.newCall(11, 1, params);
+
+        // sender secret key
+        byte[] secretKey = Hex.decodeHex("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
+
+        // sender nonce
+        long nonce = 0;
+
+        // era period: use 64
+        long period = 64;
+
+        // era current: the block number of the best block
+        long current = 26491;
+
+        // era current hash: the block hash of the best block
+        byte[] currentHash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
+
+        Tx tx = Tx.buildTx(secretKey, nonce, period, current, currentHash, call);
+
+        // get the raw tx
+        byte[] encode = tx.encode();
+
+        System.out.println(Hex.encodeHexString(encode));
+
+        assertEquals(call.getModule(), 11);
+        assertEquals(call.getMethod(), 1);
+
+        assertEquals(encode.length, 139);
+
+    }
+
+    @Test
     public void testVerifyTx() throws Exception {
 
-        byte[] raw = Hex.decodeHex("290281ffb03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209168247df3d0a8f0a33da4b86c1de80dc53ab9fe46ae9289fece568e0cc8b2a4383b250e09211171646ff396ae201855ced3361e7f8551dba4a1b5434c28c8d8800b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f");
+        byte[] raw = Hex.decodeHex("290281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726f2675f1d0fc18853845f59c012cdfecd10134d6c9312ed5cd0f64908f2c0b1439b996384b5ada3f8db54517d81bb0d07aa6cf101703d23d4a50222b791741110600b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f");
 
         Tx tx = Tx.decode(raw);
 
@@ -90,9 +127,26 @@ public class TxTest {
     }
 
     @Test
+    public void testVerifyTx2() throws Exception {
+
+        byte[] raw = Hex.decodeHex("250281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726fa2dc5a9760131feac59cfc07312f7e65836ffcc9dbeeff0c96ae380d45a3a21c484d0cf3d371abba5d74dccd5dae6f893ca1f5b57a9b210b5d23d1687f92b10900b5030b0104ffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c");
+
+        Tx tx = Tx.decode(raw);
+
+        assertEquals(tx.getModule(), 11);
+        assertEquals(tx.getMethod(), 1);
+
+        byte[] currentHash = Hex.decodeHex("c561eb19e88ce3728776794a9479e41f3ca4a56ffd01085ed4641bd608ecfe13");
+
+        tx.verify(currentHash);
+
+    }
+
+
+    @Test
     public void testVerifyTxFail() throws Exception {
 
-        byte[] raw = Hex.decodeHex("290281ffb03481c9f7e36ddaf3fd206ff3eea011eb5c431778ece03f99f2094d352a7209168247df3d0a8f0a33da4b86c1de80dc53ab9fe46ae9289fece568e0cc8b2a4383b250e09211171646ff396ae201855ced3361e7f8551dba4a1b5434c28c8d8800b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f");
+        byte[] raw = Hex.decodeHex("290281ff505b18b2457d210cca1b922cb8059f26d71a5f7e9a47dd05057ab5b53593726f2675f1d0fc18853845f59c012cdfecd10134d6c9312ed5cd0f64908f2c0b1439b996384b5ada3f8db54517d81bb0d07aa6cf101703d23d4a50222b791741110600b5030400ff927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70a10f");
 
         Tx tx = Tx.decode(raw);
 

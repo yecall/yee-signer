@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use parity_codec::{Compact, Encode, Decode, Input, Output};
-use crate::{PUBLIC_KEY_LEN, SIGNATURE_LENGTH, SECRET_KEY_LEN};
+use parity_codec::{Compact, Decode, Encode, Input, Output};
+use serde::{Deserialize, Serialize};
+
+use crate::{PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH};
+use crate::tx::serde::SerdeHex;
 
 pub const ADDRESS_LEN: usize = 33;
 pub const HASH_LEN: usize = 32;
@@ -24,25 +27,19 @@ pub type Secret = [u8; SECRET_KEY_LEN];
 pub type Nonce = u64;
 pub type Hash = [u8; HASH_LEN];
 
-#[derive(Clone)]
-pub struct Address(pub [u8; ADDRESS_LEN]);
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Address(#[serde(with="SerdeHex")] pub [u8; ADDRESS_LEN]);
 
 pub struct Transaction<Params> {
 	pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
 	pub call: Call<Params>,
 }
 
-#[derive(Encode, Decode, Clone)]
+#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
 pub struct Call<Params> {
 	pub module: i8,
 	pub method: i8,
 	pub params: Params,
-}
-
-#[derive(Encode, Decode, Clone)]
-pub struct BalanceTransferParams {
-	pub dest: Address,
-	pub value: Compact<u128>,
 }
 
 pub fn address_from_public(public_key: &[u8]) -> Address {
