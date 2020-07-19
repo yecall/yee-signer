@@ -82,66 +82,90 @@ JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verifierFree
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    buildCall
- * Signature: (II[B[B)J
+ * Signature: ([B[B)J
  */
 JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildCall
-  (JNIEnv *, jclass, jint, jint, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jbyteArray, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    callFree
- * Signature: (JII[B)V
+ * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_callFree
-  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    buildTx
- * Signature: ([BJJJ[BJII[B)J
+ * Signature: ([BJJJ[BJ[B)J
  */
 JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_buildTx
-  (JNIEnv *, jclass, jbyteArray, jlong, jlong, jlong, jbyteArray, jlong, jint, jint, jbyteArray);
+  (JNIEnv *, jclass, jbyteArray, jlong, jlong, jlong, jbyteArray, jlong, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    txFree
- * Signature: (JII[B)V
+ * Signature: (J[B)V
  */
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_txFree
-  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    txLength
- * Signature: (JII[B)J
+ * Signature: (J[B)J
  */
 JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_txLength
-  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    txEncode
- * Signature: (JII[B[B)V
+ * Signature: (J[B)J
  */
-JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_txEncode
-  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray, jbyteArray);
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_txEncode
+  (JNIEnv *, jclass, jlong, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    vecLen
+ * Signature: (J[B)J
+ */
+JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_vecLen
+  (JNIEnv *, jclass, jlong, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    vecCopy
+ * Signature: (J[B[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_vecCopy
+  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray);
+
+/*
+ * Class:     io_yeeco_yeesigner_JNI
+ * Method:    vecFree
+ * Signature: (J[B)V
+ */
+JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_vecFree
+  (JNIEnv *, jclass, jlong, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    txDecode
- * Signature: ([B[B[B[B)J
+ * Signature: ([B[B)J
  */
 JNIEXPORT jlong JNICALL Java_io_yeeco_yeesigner_JNI_txDecode
-  (JNIEnv *, jclass, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jbyteArray, jbyteArray);
 
 /*
  * Class:     io_yeeco_yeesigner_JNI
  * Method:    verifyTx
- * Signature: (JII[B[B)V
+ * Signature: (J[B[B)V
  */
 JNIEXPORT void JNICALL Java_io_yeeco_yeesigner_JNI_verifyTx
-  (JNIEnv *, jclass, jlong, jint, jint, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray);
 
 #ifdef __cplusplus
 }

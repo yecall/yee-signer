@@ -12,11 +12,7 @@
 
 @property (nonatomic) unsigned int* pointer;
 
-@property (nonatomic) unsigned int module;
-
-@property (nonatomic) unsigned int method;
-
-+ (Call *) buildCall:(u_int)module method:(u_int)method params:(NSString* ) params error:(NSError **) error;
++ (Call *) buildCall:(NSString* ) json error:(NSError **) error;
 
 - (void) free:(NSError **)error;
 

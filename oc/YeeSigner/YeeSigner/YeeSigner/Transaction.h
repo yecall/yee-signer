@@ -13,10 +13,6 @@
 
 @property (nonatomic) unsigned int* pointer;
 
-@property (nonatomic) unsigned int module;
-
-@property (nonatomic) unsigned int method;
-
 + (Transaction *) buildTx:(NSData* ) secretKey nonce:(u_long) nonce period:(u_long) period current: (u_long) current current_hash: (NSData* ) current_hash call: (Call *) call error:(NSError **) error;
 
 + (Transaction *) decode: (NSData* )raw error:(NSError **) error;

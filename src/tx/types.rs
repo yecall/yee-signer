@@ -14,8 +14,10 @@
 
 use parity_codec::{Compact, Decode, Encode, Input, Output};
 use serde::{Deserialize, Serialize};
+use serde::export::fmt::Debug;
 
 use crate::{PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH};
+pub use crate::tx::call::Call;
 use crate::tx::serde::SerdeHex;
 
 pub const ADDRESS_LEN: usize = 33;
@@ -26,20 +28,36 @@ pub type Signature = [u8; SIGNATURE_LENGTH];
 pub type Secret = [u8; SECRET_KEY_LEN];
 pub type Nonce = u64;
 pub type Hash = [u8; HASH_LEN];
+pub type BlockNumber = u64;
+
+pub type Key = Bytes;
+
+pub type KeyValue = (Bytes, Bytes);
+
+#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
+pub struct AuthorityId(#[serde(with = "SerdeHex")] pub Public);
+
+#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
+pub struct AccountId(#[serde(with = "SerdeHex")] pub Public);
+
+#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
+pub struct Bytes(#[serde(with = "SerdeHex")] pub Vec<u8>);
+
+#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
+pub struct SerdeHash(#[serde(with = "SerdeHex")] pub [u8; 32]);
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Address(#[serde(with="SerdeHex")] pub [u8; ADDRESS_LEN]);
+pub struct Address(#[serde(with = "SerdeHex")] pub [u8; ADDRESS_LEN]);
 
-pub struct Transaction<Params> {
-	pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
-	pub call: Call<Params>,
+impl Debug for Address {
+	fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+		write!(f, "Address({:?})", self.0.to_vec())
+	}
 }
 
-#[derive(Encode, Decode, Clone, Serialize, Deserialize)]
-pub struct Call<Params> {
-	pub module: i8,
-	pub method: i8,
-	pub params: Params,
+pub struct Transaction {
+	pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
+	pub call: Call,
 }
 
 pub fn address_from_public(public_key: &[u8]) -> Address {
@@ -150,7 +168,7 @@ impl Decode for Address {
 
 const TRANSACTION_VERSION: u8 = 1;
 
-impl<Params: Encode> Encode for Transaction<Params> {
+impl Encode for Transaction {
 	fn encode_to<W: Output>(&self, dest: &mut W) {
 		let mut buffer = Vec::new();
 		match self.signature.as_ref() {
@@ -167,7 +185,7 @@ impl<Params: Encode> Encode for Transaction<Params> {
 	}
 }
 
-impl<Params: Decode> Decode for Transaction<Params> {
+impl Decode for Transaction {
 	fn decode<I: Input>(input: &mut I) -> Option<Self> {
 		let _length_do_not_remove_me_see_above: Vec<()> = Decode::decode(input)?;
 
@@ -176,7 +194,7 @@ impl<Params: Decode> Decode for Transaction<Params> {
 		let is_signed = version & 0b1000_0000 != 0;
 		let version = version & 0b0111_1111;
 		if version != TRANSACTION_VERSION {
-			return None
+			return None;
 		}
 
 		Some(Transaction {

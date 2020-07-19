@@ -3,34 +3,26 @@ package io.yeeco.yeesigner;
 public class Tx {
 
     private long pointer;
-    private int method;
-    private int module;
 
     public static Tx buildTx(byte[] secretKey, long nonce, long period, long current, byte[] currentHash, Call call) throws SignerException {
 
         byte[] error = new byte[1];
-        long pointer = JNI.buildTx(secretKey, nonce, period, current, currentHash, call.getPointer(), call.getModule(), call.getMethod(), error);
+        long pointer = JNI.buildTx(secretKey, nonce, period, current, currentHash, call.getPointer(), error);
         ErrorUtils.checkErrorCode(error[0]);
 
         Tx instance = new Tx();
         instance.pointer = pointer;
-        instance.module = call.getModule();
-        instance.method = call.getMethod();
         return instance;
     }
 
     public static Tx decode(byte[] raw) throws SignerException {
 
         byte[] error = new byte[1];
-        byte[] module = new byte[1];
-        byte[] method = new byte[1];
-        long pointer = JNI.txDecode(raw, module, method, error);
+        long pointer = JNI.txDecode(raw, error);
         ErrorUtils.checkErrorCode(error[0]);
 
         Tx instance = new Tx();
         instance.pointer = pointer;
-        instance.module = module[0];
-        instance.method = method[0];
 
         return instance;
     }
@@ -38,13 +30,25 @@ public class Tx {
     public byte[] encode() throws SignerException {
 
         byte[] error = new byte[1];
-        int len = (int) JNI.txLength(pointer, module, method, error);
+        long vecPointer = JNI.txEncode(pointer, error);
         ErrorUtils.checkErrorCode(error[0]);
 
-        byte[] encode = new byte[len];
-        error = new byte[1];
-        JNI.txEncode(pointer, module, method, encode, error);
-        ErrorUtils.checkErrorCode(error[0]);
+        byte[] encode = null;
+
+        try {
+            int vecLen = (int) JNI.vecLen(vecPointer, error);
+            ErrorUtils.checkErrorCode(error[0]);
+
+            encode = new byte[vecLen];
+            JNI.vecCopy(vecPointer, encode, error);
+            ErrorUtils.checkErrorCode(error[0]);
+
+        }catch (SignerException e){
+            throw e;
+        } finally {
+            JNI.vecFree(vecPointer, error);
+            ErrorUtils.checkErrorCode(error[0]);
+        }
 
         return encode;
     }
@@ -52,23 +56,15 @@ public class Tx {
     public void verify(byte[] currentHash) throws SignerException {
 
         byte[] error = new byte[1];
-        JNI.verifyTx(pointer, module, method, currentHash, error);
+        JNI.verifyTx(pointer, currentHash, error);
         ErrorUtils.checkErrorCode(error[0]);
 
-    }
-
-    public int getMethod() {
-        return method;
-    }
-
-    public int getModule() {
-        return module;
     }
 
     @Override
     protected void finalize() {
         byte[] error = new byte[1];
-        JNI.txFree(pointer, module, method, error);
+        JNI.txFree(pointer, error);
     }
 
 }

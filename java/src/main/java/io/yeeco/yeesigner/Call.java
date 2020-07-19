@@ -3,19 +3,15 @@ package io.yeeco.yeesigner;
 public class Call {
 
     private long pointer;
-    private int module;
-    private int method;
 
-    public static Call newCall(int module, int method, String params) throws SignerException {
+    public static Call newCall(String json) throws SignerException {
 
         byte[] error = new byte[1];
-        long pointer = JNI.buildCall(module, method, params.getBytes(), error);
+        long pointer = JNI.buildCall(json.getBytes(), error);
         ErrorUtils.checkErrorCode(error[0]);
 
         Call instance = new Call();
         instance.pointer = pointer;
-        instance.module = module;
-        instance.method = method;
         return instance;
     }
 
@@ -23,18 +19,10 @@ public class Call {
         return pointer;
     }
 
-    public int getModule() {
-        return module;
-    }
-
-    public int getMethod() {
-        return method;
-    }
-
     @Override
     protected void finalize(){
         byte[] error = new byte[1];
-        JNI.callFree(pointer, module, method, error);
+        JNI.callFree(pointer, error);
     }
 
 }

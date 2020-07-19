@@ -20,7 +20,7 @@
         @6: @"jni error",
         @7: @"invalid method",
         @8: @"invalid tx",
-        @9: @"invalid params",
+        @9: @"invalid json",
     };
     
     NSString *message = [dict objectForKey:@(err)];
