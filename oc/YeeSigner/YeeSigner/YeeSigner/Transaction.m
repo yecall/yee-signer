@@ -21,7 +21,7 @@
     
     unsigned int err = 0;
     
-    unsigned int* pointer = yee_signer_build_tx(secretKey.bytes, (unsigned int)secretKey.length, nonce, period, current, current_hash.bytes, (unsigned int)current_hash.length, call.pointer, call.module, call.method, &err);
+    unsigned int* pointer = yee_signer_build_tx(secretKey.bytes, (unsigned int)secretKey.length, nonce, period, current, current_hash.bytes, (unsigned int)current_hash.length, call.pointer, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
@@ -29,8 +29,6 @@
     
     Transaction *tx = [Transaction alloc];
     tx.pointer = pointer;
-    tx.module = call.module;
-    tx.method = call.method;
     
     return tx;
     
@@ -38,11 +36,9 @@
 
 + (Transaction *) decode: (NSData* )raw error:(NSError **) error{
     
-    unsigned int module_holder = 0;
-    unsigned int method_holder = 0;
     unsigned int err = 0;
     
-    unsigned int* pointer = yee_signer_tx_decode(raw.bytes, (unsigned int)raw.length, &module_holder, &method_holder, &err);
+    unsigned int* pointer = yee_signer_tx_decode(raw.bytes, (unsigned int)raw.length, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
@@ -50,8 +46,6 @@
     
     Transaction *tx = [Transaction alloc];
     tx.pointer = pointer;
-    tx.module = module_holder;
-    tx.method = method_holder;
     
     return tx;
 }
@@ -60,23 +54,35 @@
     
     unsigned int err = 0;
     
-    unsigned int len = yee_signer_tx_length(self.pointer, self.module, self.method, &err);
-    
+    unsigned int* vec_pointer = yee_signer_tx_encode(self.pointer, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
     }
     
-    unsigned char buffer[len];
+    unsigned int vec_len = yee_signer_vec_len(vec_pointer, &err);
+    if(err > 0) {
+        *error = [ErrorUtils error:err];
+        yee_signer_vec_free(vec_pointer, &err);
+        return nil;
+    }
     
-    yee_signer_tx_encode(self.pointer, self.module, self.method, buffer, len, &err);
+    unsigned char buffer[vec_len];
+    yee_signer_vec_copy(vec_pointer, buffer, vec_len, &err);
+    if(err > 0) {
+        *error = [ErrorUtils error:err];
+        yee_signer_vec_free(vec_pointer, &err);
+        return nil;
+    }
     
+    // free vec
+    yee_signer_vec_free(vec_pointer, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
     }
     
-    NSData* data = [NSData dataWithBytes:(const void *)buffer length:len];
+    NSData* data = [NSData dataWithBytes:(const void *)buffer length:vec_len];
     return data;
 }
 
@@ -84,14 +90,14 @@
     
     unsigned int err = 0;
     
-    yee_signer_verify_tx(self.pointer, self.module, self.method, currentHash.bytes, (unsigned int)currentHash.length, &err);
+    yee_signer_verify_tx(self.pointer, currentHash.bytes, (unsigned int)currentHash.length, &err);
     return err == 0 ? YES : NO;
 }
 
 - (void) free:(NSError **)error{
     
     unsigned int err = 0;
-    yee_signer_tx_free(self.pointer, self.module, self.method, &err);
+    yee_signer_tx_free(self.pointer, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
     }

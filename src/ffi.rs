@@ -146,12 +146,12 @@ pub extern "C" fn yee_signer_verifier_free(verifier: *mut c_uint,
 
 #[no_mangle]
 pub extern "C" fn yee_signer_build_call
-(module: c_uint, method: c_uint, params: *const c_uchar, params_len: c_uint, error: *mut c_uint) -> *mut c_uint {
+(json: *const c_uchar, json_len: c_uint, error: *mut c_uint) -> *mut c_uint {
 
-	let params = unsafe { slice::from_raw_parts(params, params_len as usize) };
+	let json = unsafe { slice::from_raw_parts(json, json_len as usize) };
 
 	let run = || -> SignerResult<*mut c_uint> {
-		export::common_build_call(module as u8, method as u8, params)
+		export::common_build_call(json)
 	};
 
 	error_result_ffi(run, null_mut() as *mut _, error)
@@ -159,9 +159,9 @@ pub extern "C" fn yee_signer_build_call
 
 #[no_mangle]
 pub extern "C" fn yee_signer_call_free
-(call: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) {
+(call: *mut c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
-		export::call_free(call, module as u8, method as u8)
+		export::call_free(call)
 	};
 
 	error_result_ffi(run, (), error)
@@ -170,7 +170,7 @@ pub extern "C" fn yee_signer_call_free
 #[no_mangle]
 pub extern "C" fn yee_signer_build_tx
 (secret_key: *const c_uchar, secret_key_len: c_uint, nonce: c_ulong, period: c_ulong, current: c_ulong,
- current_hash: *const c_uchar, current_hash_len: c_uint, call: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) -> *mut c_uint {
+ current_hash: *const c_uchar, current_hash_len: c_uint, call: *mut c_uint, error: *mut c_uint) -> *mut c_uint {
 	let run = || -> SignerResult<*mut c_uint> {
 		let secret_key = {
 			let mut tmp = [0u8; SECRET_KEY_LEN];
@@ -188,7 +188,7 @@ pub extern "C" fn yee_signer_build_tx
 			tmp
 		};
 
-		export::common_build_tx(secret_key, nonce, period, current, current_hash, call, module as u8, method as u8)
+		export::common_build_tx(secret_key, nonce, period, current, current_hash, call)
 	};
 
 	error_result_ffi(run, null_mut() as *mut _, error)
@@ -196,32 +196,61 @@ pub extern "C" fn yee_signer_build_tx
 
 #[no_mangle]
 pub extern "C" fn yee_signer_tx_free
-(tx: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) {
+(tx: *mut c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
-		export::tx_free(tx, module as u8, method as u8)
+		export::tx_free(tx)
 	};
 
 	error_result_ffi(run, (), error)
 }
 
 #[no_mangle]
-pub extern "C" fn yee_signer_tx_length
-(tx: *mut c_uint, module: c_uint, method: c_uint, error: *mut c_uint) -> c_uint {
+pub extern "C" fn yee_signer_tx_encode
+(tx: *mut c_uint, error: *mut c_uint) -> *mut c_uint {
+	let run = || -> SignerResult<*mut c_uint> {
+		let result = export::tx_encode(tx)?;
+		Ok(result)
+	};
+
+	error_result_ffi(run, null_mut() as *mut _, error)
+}
+
+#[no_mangle]
+pub extern "C" fn yee_signer_vec_len
+(vec: *mut c_uint, error: *mut c_uint) -> c_uint {
 	let run = || -> SignerResult<c_uint> {
-		let result = export::tx_encode(tx, module as u8, method as u8)?.len();
-		Ok(result as c_uint)
+		let result = export::vec_len(vec)?;
+		Ok(result)
 	};
 
 	error_result_ffi(run, 0, error)
 }
 
 #[no_mangle]
-pub extern "C" fn yee_signer_tx_encode
-(tx: *mut c_uint, module: c_uint, method: c_uint, buffer: *mut c_uchar, buffer_len: c_uint, error: *mut c_uint) {
+pub extern "C" fn yee_signer_vec_copy
+(vec: *mut c_uint, out: *mut c_uchar, out_len: c_uint,  error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
-		let result = export::tx_encode(tx, module as u8, method as u8)?;
-		let buffer = unsafe { slice::from_raw_parts_mut(buffer, buffer_len as usize) };
-		buffer.copy_from_slice(&result);
+
+		let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
+
+		let f = |vec: &Vec<u8>| {
+			out.copy_from_slice(vec);
+			Ok(())
+		};
+
+		export::vec_copy(vec, f)?;
+		Ok(())
+	};
+
+	error_result_ffi(run, (), error)
+}
+
+#[no_mangle]
+pub extern "C" fn yee_signer_vec_free
+(vec: *mut c_uint, error: *mut c_uint) {
+	let run = || -> SignerResult<()> {
+
+		export::vec_free(vec)?;
 		Ok(())
 	};
 
@@ -230,14 +259,11 @@ pub extern "C" fn yee_signer_tx_encode
 
 #[no_mangle]
 pub extern "C" fn yee_signer_tx_decode
-(raw: *const c_uchar, raw_len: c_uint, module_holder: *mut c_uint, method_holder: *mut c_uint, error: *mut c_uint) -> *mut c_uint {
+(raw: *const c_uchar, raw_len: c_uint, error: *mut c_uint) -> *mut c_uint {
 	let run = || -> SignerResult<*mut c_uint> {
 		let raw = unsafe { slice::from_raw_parts(raw, raw_len as usize) };
 
-		let (tx, module, method) = export::tx_decode(raw)?;
-
-		unsafe { *module_holder = module as c_uint };
-		unsafe { *method_holder = method as c_uint };
+		let tx = export::tx_decode(raw)?;
 
 		Ok(tx)
 	};
@@ -247,7 +273,7 @@ pub extern "C" fn yee_signer_tx_decode
 
 #[no_mangle]
 pub extern "C" fn yee_signer_verify_tx
-(tx: *mut c_uint, module: c_uint, method: c_uint, current_hash: *const c_uchar, current_hash_len: c_uint, error: *mut c_uint) {
+(tx: *mut c_uint, current_hash: *const c_uchar, current_hash_len: c_uint, error: *mut c_uint) {
 	let run = || -> SignerResult<()> {
 		let current_hash = {
 			let mut tmp = [0u8; HASH_LEN];
@@ -255,7 +281,7 @@ pub extern "C" fn yee_signer_verify_tx
 			tmp
 		};
 
-		export::common_verify_tx(tx, module as u8, method as u8, &current_hash)
+		export::common_verify_tx(tx, &current_hash)
 	};
 
 	error_result_ffi(run, (), error);

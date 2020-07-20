@@ -25,17 +25,13 @@ mod serde;
 
 const CTX: &[u8] = b"substrate";
 
-pub fn build_call<Params>(module: u8, method: u8, params: Params) -> Call<Params>
+pub fn build_call(json: &[u8]) -> SignerResult<Call>
 {
-	Call {
-		module: module as i8,
-		method: method as i8,
-		params,
-	}
+	let call: Call = serde_json::from_slice(json).map_err(|_| "invalid json")?;
+	Ok(call)
 }
 
-pub fn build_tx<Params>(secret_key: Secret, nonce: Nonce, period: u64, current: u64, current_hash: Hash, call: Call<Params>) -> SignerResult<Transaction<Params>>
-	where Params: Encode,
+pub fn build_tx(secret_key: Secret, nonce: Nonce, period: u64, current: u64, current_hash: Hash, call: Call) -> SignerResult<Transaction>
 {
 	let key_pair = KeyPair::from_secret_key(&secret_key)?;
 
@@ -83,8 +79,7 @@ pub fn decode_tx_method(raw: &[u8]) -> SignerResult<(u8, u8)> {
 	Ok((a.call.0 as u8, a.call.1 as u8))
 }
 
-pub fn verify_tx<Params>(tx: &Transaction<Params>, current_hash: &Hash) -> SignerResult<()>
-	where Params: Encode,
+pub fn verify_tx(tx: &Transaction, current_hash: &Hash) -> SignerResult<()>
 {
 	let (address, signature, nonce, era) = match &tx.signature {
 		Some(signature) => signature,
@@ -120,9 +115,6 @@ fn blake2b_256(data: &[u8]) -> Hash {
 #[cfg(test)]
 mod tests {
 	use parity_codec::Decode;
-
-	use crate::tx::call::{BALANCE, BalanceTransferParams, CRFG, CrfgForceUpdateAuthoritiesParams, FORCE_UPDATE_AUTHORITIES, SUDO, SUDO_SET_KEY, SUDO_SUDO, SudoSetKeyParams, SudoSudoParams, TRANSFER};
-
 	use super::*;
 
 	#[test]
@@ -132,14 +124,12 @@ mod tests {
 		let dest = format!("0x{}", hex::encode(&dest.0[..]));
 		let value = 1000;
 
-		let module = BALANCE;
-		let method = TRANSFER;
-		let params = format!(r#"{{"dest":"{}","value":{}}}"#, dest, value);
-		println!("call:{} {} {}", module, method, params);
+		let module = call::balances::MODULE;
+		let method = call::balances::TRANSFER;
+		let call = format!(r#"{{ "module":{}, "method":{}, "params":{{"dest":"{}","value":{}}}}}"#, module, method, dest, value);
+		println!("call: {}", call);
 
-		let params: BalanceTransferParams = serde_json::from_str(&params).unwrap();
-
-		let call = build_call(module, method, params);
+		let call = build_call(call.as_bytes()).unwrap();
 
 		let nonce = 0;
 		let (current, current_hash) = get_current();
@@ -155,14 +145,12 @@ mod tests {
 
 		let address = format!("0x{}", hex::encode(&address.0[..]));
 
-		let module = SUDO;
-		let method = SUDO_SET_KEY;
-		let params = format!(r#"{{"addresses":["{}"]}}"#, address);
-		println!("call:{} {} {}", module, method, params);
+		let module = call::sudo::MODULE;
+		let method = call::sudo::SET_KEY;
+		let call = format!(r#"{{ "module":{}, "method":{}, "params":{{"addresses":["{}"]}}}}"#, module, method, address);
+		println!("call: {}", call);
 
-		let params: SudoSetKeyParams = serde_json::from_str(&params).unwrap();
-
-		let call = build_call(module, method, params);
+		let call = build_call(call.as_bytes()).unwrap();
 
 		let nonce = 0;
 		let (current, current_hash) = get_current();
@@ -175,24 +163,19 @@ mod tests {
 	fn test_tx_sudo_sudo_force_update_crfg_authorites() {
 		let (key_pair0, _key_pair4) = get_key_pairs();
 
-		let module = SUDO;
-		let method = SUDO_SUDO;
-
-		let crfg_module = CRFG;
-		let crfg_method = FORCE_UPDATE_AUTHORITIES;
 		let authority_id = "0x7800f639b82c7d139c81e33cd226ebaf9c5b0df79358114c1c71498d20a3399e";
 		let weight = 1;
 		let median = 11;
 
-		let params = format!(r#"{{"proposal":{{"module":{},"method":{},"params":{{"authorities":[["{}",{}]],"median":{}}}}}}}"#,
-							 crfg_module, crfg_method, authority_id, weight, median,
-		);
+		let module = call::sudo::MODULE;
+		let method = call::sudo::SUDO;
+		let crfg_module = call::crfg::MODULE;
+		let crfg_method = call::crfg::FORCE_UPDATE_AUTHORITIES;
+		let call = format!(r#"{{ "module":{}, "method":{}, "params":{{"proposal":{{"module":{},"method":{},"params":{{"authorities":[["{}",{}]],"median":{}}}}}}}}}"#,
+						   module, method, crfg_module, crfg_method, authority_id, weight, median);
+		println!("call: {}", call);
 
-		println!("call:{} {} {}", module, method, params);
-
-		let params: SudoSudoParams<Call<CrfgForceUpdateAuthoritiesParams>> = serde_json::from_str(&params).unwrap();
-
-		let call = build_call(module, method, params);
+		let call = build_call(call.as_bytes()).unwrap();
 
 		let nonce = 0;
 		let (current, current_hash) = get_current();
@@ -201,7 +184,7 @@ mod tests {
 		test_tx(key_pair0, nonce, current, current_hash, call, expected);
 	}
 
-	fn test_tx<Params: Encode + Decode>(sender: KeyPair, nonce: u64, current: u64, current_hash: Hash, call: Call<Params>, expected: (usize, u8, u8)) {
+	fn test_tx(sender: KeyPair, nonce: u64, current: u64, current_hash: Hash, call: Call, expected: (usize, u8, u8)) {
 		let (expected_len, expected_module, expected_method) = expected;
 
 		let secret_key = sender.secret_key();
@@ -219,7 +202,7 @@ mod tests {
 		assert_eq!((module, method), (expected_module, expected_method));
 
 		// decode
-		let tx: Transaction<Params> = Decode::decode(&mut &tx[..]).unwrap();
+		let tx: Transaction = Decode::decode(&mut &tx[..]).unwrap();
 
 		// verify
 		let verified = verify_tx(&tx, &current_hash);

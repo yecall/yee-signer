@@ -20,20 +20,24 @@ public class JNI {
 
     public native static void verifierFree(long verifier, byte[] error);
 
-    public native static long buildCall(int module, int method, byte[] params, byte[] error);
+    public native static long buildCall(byte[] json, byte[] error);
 
-    public native static void callFree(long call, int module, int method, byte[] error);
+    public native static void callFree(long call, byte[] error);
 
-    public native static long buildTx(byte[] secretKey, long nonce, long period, long current, byte[] currentHash, long call, int module, int method, byte[] error);
+    public native static long buildTx(byte[] secretKey, long nonce, long period, long current, byte[] currentHash, long call, byte[] error);
 
-    public native static void txFree(long tx, int module, int method, byte[] error);
+    public native static void txFree(long tx, byte[] error);
 
-    public native static long txLength(long tx, int module, int method, byte[] error);
+    public native static long txEncode(long tx, byte[] error);
 
-    public native static void txEncode(long tx, int module, int method, byte[] buffer, byte[] error);
+    public native static long vecLen(long vec, byte[] error);
 
-    public native static long txDecode(byte[] raw, byte[] module, byte[] method, byte[] error);
+    public native static void vecCopy(long vec, byte[] out, byte[] error);
 
-    public native static void verifyTx(long tx, int module, int method, byte[] currentHash, byte[] error);
+    public native static void vecFree(long vec, byte[] error);
+
+    public native static long txDecode(byte[] raw, byte[] error);
+
+    public native static void verifyTx(long tx, byte[] currentHash, byte[] error);
 
 }

@@ -16,13 +16,13 @@
 
 @implementation Call
 
-+ (Call *) buildCall:(u_int)module method:(u_int)method params:(NSString* ) params error:(NSError **) error{
++ (Call *) buildCall:(NSString* ) json error:(NSError **) error{
     
-    NSData* paramsData = [params dataUsingEncoding:NSUTF8StringEncoding];
+    NSData* jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];
 
     unsigned int err = 0;
     
-    unsigned int* pointer = yee_signer_build_call(module, method, paramsData.bytes, (unsigned int)paramsData.length, &err);
+    unsigned int* pointer = yee_signer_build_call(jsonData.bytes, (unsigned int)jsonData.length, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
         return nil;
@@ -30,15 +30,13 @@
     
     Call* call = [Call alloc];
     call.pointer = pointer;
-    call.module = module;
-    call.method = method;
     return call;
 }
 
 - (void) free:(NSError **)error {
     
     unsigned int err = 0;
-    yee_signer_call_free(self.pointer, self.module, self.method, &err);
+    yee_signer_call_free(self.pointer, &err);
     if(err > 0) {
         *error = [ErrorUtils error:err];
     }

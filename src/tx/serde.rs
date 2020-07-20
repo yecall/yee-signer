@@ -74,3 +74,15 @@ impl SerdeHex for [u8; 32] {
 		Ok(v)
 	}
 }
+
+impl SerdeHex for Vec<u8> {
+	type Error = io::Error;
+
+	fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
+		Ok(self.to_owned())
+	}
+
+	fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
+		Ok(src.to_vec())
+	}
+}
