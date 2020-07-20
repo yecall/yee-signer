@@ -103,8 +103,8 @@ NSAssert(ok, @"");
 // params json
 // dest:  address: 33 bytes, 0xFF + public key
 // value: transfer value
-String params = "{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}";
-Call call = Call.newCall(4, 0, params);
+String json = "{\"module\":4, \"method\":0, \"params\":{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}}";
+Call call = Call.newCall(json);
 
 // sender secret key: 64 bytes
 byte[] secret_key = Hex.decodeHex("0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408");
@@ -135,8 +135,8 @@ NSError* error = nil;
 // params json
 // dest:  address: 33 bytes, 0xFF + public key
 // value: transfer value
-NSString *params = @"{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}";
-Call* call = [Call buildCall:4 method:0 params:params error:&error];
+NSString *json = @"{\"module\":4, \"method\":0, \"params\":{\"dest\":\"0xFF927b69286c0137e2ff66c6e561f721d2e6a2e9b92402d2eed7aebdca99005c70\",\"value\":1000}}";
+Call* call = [Call buildCall:json error:&error];
 
 // sender secret key: 64 bytes
 NSData* secretKey = [NSData fromHex:@"0b58d672927e01314d624fcb834a0f04b554f37640e0a4c342029a996ec1450bac8afb286e210d3afbfb8fd429129bd33329baaea6b919c92651c072c59d2408"];
