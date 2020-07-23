@@ -14,7 +14,7 @@
 
 use parity_codec::{Compact, Decode, Input};
 use parity_codec::Encode;
-use rust_crypto::blake2b;
+use blake2_rfc;
 
 use crate::{KeyPair, PUBLIC_KEY_LEN, SignerResult, Verifier};
 use crate::tx::types::{Address, address_from_public, Call, Era, Hash, HASH_LEN, Nonce, Secret, Signature, Transaction};
@@ -107,9 +107,13 @@ pub fn verify_tx(tx: &Transaction, current_hash: &Hash) -> SignerResult<()>
 }
 
 fn blake2b_256(data: &[u8]) -> Hash {
-	let mut out = [0u8; HASH_LEN];
-	blake2b::Blake2b::blake2b(&mut out, data, &[]);
-	out
+	let mut r = [0; HASH_LEN];
+	blake2_256_into(data, &mut r);
+	r
+}
+
+pub fn blake2_256_into(data: &[u8], dest: &mut [u8; 32]) {
+	dest.copy_from_slice(blake2_rfc::blake2b::blake2b(32, &[], data).as_bytes());
 }
 
 #[cfg(test)]
