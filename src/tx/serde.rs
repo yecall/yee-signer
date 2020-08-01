@@ -12,77 +12,76 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use serde::{Serializer, Deserializer};
 use serde::export::fmt::Display;
+use serde::{Deserializer, Serializer};
 use std::io;
 
 pub trait SerdeHex: Sized {
+    type Error: Display;
 
-	type Error: Display;
+    fn into_bytes(&self) -> Result<Vec<u8>, Self::Error>;
 
-	fn into_bytes(&self) -> Result<Vec<u8>, Self::Error>;
+    fn from_bytes(src: &[u8]) -> Result<Self, Self::Error>;
 
-	fn from_bytes(src: &[u8]) -> Result<Self, Self::Error>;
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        use serde::ser::Error;
+        let bytes = self.into_bytes().map_err(S::Error::custom)?;
 
-	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-		where
-			S: Serializer,
-	{
-		use serde::ser::Error;
-		let bytes = self.into_bytes().map_err(S::Error::custom)?;
+        impl_serde::serialize::serialize(bytes.as_slice(), serializer)
+    }
 
-		impl_serde::serialize::serialize(bytes.as_slice(), serializer)
-	}
+    /// Attempt to deserialize a hexadecimal string into an instance of `Self`.
+    fn deserialize<'de, D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        use serde::de::Error;
 
-	/// Attempt to deserialize a hexadecimal string into an instance of `Self`.
-	fn deserialize<'de, D>(deserializer: D) -> Result<Self, D::Error>
-		where
-			D: Deserializer<'de>,
-	{
-		use serde::de::Error;
+        let bytes = impl_serde::serialize::deserialize(deserializer)?;
 
-		let bytes = impl_serde::serialize::deserialize(deserializer)?;
-
-		Self::from_bytes(bytes.as_slice()).map_err(D::Error::custom)
-	}
+        Self::from_bytes(bytes.as_slice()).map_err(D::Error::custom)
+    }
 }
 
 impl SerdeHex for [u8; 33] {
-	type Error = io::Error;
+    type Error = io::Error;
 
-	fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
-		Ok(self.to_vec())
-	}
+    fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
+        Ok(self.to_vec())
+    }
 
-	fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
-		let mut v = [0u8; 33];
-		v.copy_from_slice(src);
-		Ok(v)
-	}
+    fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
+        let mut v = [0u8; 33];
+        v.copy_from_slice(src);
+        Ok(v)
+    }
 }
 
 impl SerdeHex for [u8; 32] {
-	type Error = io::Error;
+    type Error = io::Error;
 
-	fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
-		Ok(self.to_vec())
-	}
+    fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
+        Ok(self.to_vec())
+    }
 
-	fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
-		let mut v = [0u8; 32];
-		v.copy_from_slice(src);
-		Ok(v)
-	}
+    fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
+        let mut v = [0u8; 32];
+        v.copy_from_slice(src);
+        Ok(v)
+    }
 }
 
 impl SerdeHex for Vec<u8> {
-	type Error = io::Error;
+    type Error = io::Error;
 
-	fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
-		Ok(self.to_owned())
-	}
+    fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
+        Ok(self.to_owned())
+    }
 
-	fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
-		Ok(src.to_vec())
-	}
+    fn from_bytes(src: &[u8]) -> Result<Self, Self::Error> {
+        Ok(src.to_vec())
+    }
 }

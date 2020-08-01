@@ -12,45 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use jni::JNIEnv;
-use jni::sys::jbyteArray;
 use crate::SignerResult;
+use jni::sys::jbyteArray;
+use jni::JNIEnv;
 use std::os::raw::c_uint;
 
 pub fn error_result_jni<R, T>(run: R, default: T, env: &JNIEnv, error: jbyteArray) -> T
-	where R: Fn() -> SignerResult<T>,
+where
+    R: Fn() -> SignerResult<T>,
 {
-	match run() {
-		Ok(r) => r,
-		Err(e) => {
-			let _r = env.set_byte_array_region(error, 0, &[error_code(&e)]);
-			default
-		}
-	}
+    match run() {
+        Ok(r) => r,
+        Err(e) => {
+            let _r = env.set_byte_array_region(error, 0, &[error_code(&e)]);
+            default
+        }
+    }
 }
 
 pub fn error_result_ffi<R, T>(run: R, default: T, err: *mut c_uint) -> T
-	where R: Fn() -> SignerResult<T>,
+where
+    R: Fn() -> SignerResult<T>,
 {
-	match run() {
-		Ok(r) => r,
-		Err(e) => {
-			unsafe { *err = error_code(&e) as c_uint };
-			default
-		}
-	}
+    match run() {
+        Ok(r) => r,
+        Err(e) => {
+            unsafe { *err = error_code(&e) as c_uint };
+            default
+        }
+    }
 }
 
 pub fn error_code(error: &str) -> i8 {
-	match error {
-		"invalid mini secret key" => 2,
-		"invalid secret key" => 3,
-		"invalid public key" => 4,
-		"invalid signature" => 5,
-		"jni error" => 6,
-		"invalid method" => 7,
-		"invalid tx" => 8,
-		"invalid json" => 9,
-		_ => 1,
-	}
+    match error {
+        "invalid mini secret key" => 2,
+        "invalid secret key" => 3,
+        "invalid public key" => 4,
+        "invalid signature" => 5,
+        "jni error" => 6,
+        "invalid method" => 7,
+        "invalid tx" => 8,
+        "invalid json" => 9,
+        "address encode error" => 10,
+        "address decode error" => 11,
+        _ => 1,
+    }
 }

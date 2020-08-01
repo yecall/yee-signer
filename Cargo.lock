@@ -51,6 +51,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "bech32"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cdcf67bb7ba7797a081cd19009948ab533af7c355d5caf1d08c777582d351e9c"
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -762,13 +768,15 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "yee-signer"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
+ "bech32",
  "blake2-rfc",
  "hex",
  "impl-serde",
  "jni",
  "parity-codec",
+ "rand",
  "schnorrkel",
  "serde",
  "serde_derive",
