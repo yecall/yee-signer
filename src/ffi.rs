@@ -17,9 +17,21 @@ use std::ptr::null_mut;
 use std::slice;
 
 use crate::error::error_result_ffi;
-use crate::export;
+use crate::{export, PUBLIC_KEY_LEN};
 use crate::tx::types::HASH_LEN;
 use crate::{KeyPair, SignerResult, Verifier, SECRET_KEY_LEN};
+
+#[no_mangle]
+pub extern "C" fn yee_signer_key_pair_generate(
+    err: *mut c_uint,
+) -> *mut c_uint {
+    let run = || -> SignerResult<*mut c_uint> {
+        let result = export::key_pair_generate()?;
+
+        Ok(result as *mut _)
+    };
+    error_result_ffi(run, null_mut() as *mut _, err)
+}
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_from_mini_secret_key(
@@ -312,4 +324,51 @@ pub extern "C" fn yee_signer_verify_tx(
     };
 
     error_result_ffi(run, (), error);
+}
+
+#[no_mangle]
+pub extern "C" fn yee_signer_address_encode(
+    public_key: *const c_uchar,
+    public_key_len: c_uint,
+    hrp: *const c_uchar,
+    hrp_len: c_uint,
+    error: *mut c_uint,
+) -> *mut c_uint {
+    let run = || -> SignerResult<*mut c_uint> {
+        if public_key_len as usize != PUBLIC_KEY_LEN {
+            return Err("address encode error".to_string());
+        }
+        let public_key = {
+            let mut tmp = [0u8; PUBLIC_KEY_LEN];
+            tmp.copy_from_slice(unsafe {
+                slice::from_raw_parts(public_key, public_key_len as usize)
+            });
+            tmp
+        };
+        let hrp = unsafe { slice::from_raw_parts(hrp, hrp_len as usize) };
+        let address = export::common_address_encode(&public_key, &hrp)?;
+        Ok(address as *mut _)
+    };
+
+    error_result_ffi(run, null_mut() as *mut _, error)
+}
+
+#[no_mangle]
+pub extern "C" fn yee_signer_address_decode(
+    address: *const c_uchar,
+    address_len: c_uint,
+    public_key_pointer: *mut *mut c_uint,
+    hrp_pointer: *mut *mut c_uint,
+    error: *mut c_uint,
+) {
+    let run = || -> SignerResult<()> {
+        let address = unsafe { slice::from_raw_parts(address, address_len as usize) };
+        let (public_key, hrp) = export::common_address_decode(&address)?;
+
+        unsafe { *public_key_pointer = public_key };
+        unsafe { *hrp_pointer = hrp };
+        Ok(())
+    };
+
+    error_result_ffi(run, (), error)
 }
