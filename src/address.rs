@@ -16,9 +16,9 @@ use bech32::FromBase32;
 use bech32::ToBase32;
 
 use crate::{PUBLIC_KEY_LEN, SignerResult};
-use crate::alloc::Vec;
+use crate::external::Vec;
 use crate::tx::types::Public;
-use crate::alloc::{String, ToString};
+use crate::external::{String, ToString};
 
 pub fn address_encode(public_key: &[u8], hrp: &str) -> SignerResult<String> {
     validate_hrp(hrp)?;

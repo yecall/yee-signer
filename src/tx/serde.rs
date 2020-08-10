@@ -15,9 +15,9 @@
 use serde::{Deserializer, Serializer};
 use serde::export::fmt::Display;
 
-use crate::alloc::String;
-use crate::alloc::Vec;
-use crate::alloc::ToOwned;
+use crate::external::String;
+use crate::external::Vec;
+use crate::external::ToOwned;
 
 pub trait SerdeHex: Sized {
     type Error: Display;

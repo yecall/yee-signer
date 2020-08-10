@@ -18,8 +18,8 @@ use parity_codec::{Compact, Decode, Encode};
 use serde::{de, Deserialize, Deserializer, ser::SerializeStruct, Serialize, Serializer};
 use serde::de::{MapAccess, SeqAccess, Unexpected, Visitor};
 
-use crate::alloc::Vec;
-use crate::alloc::Box;
+use crate::external::Vec;
+use crate::external::Box;
 use crate::tx::types::{
     AccountId, Address, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
 };

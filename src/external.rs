@@ -17,8 +17,6 @@
 
 #![allow(non_camel_case_types)]
 
-pub extern crate alloc;
-
 pub use alloc::string::{String, ToString};
 pub use alloc::boxed::Box;
 pub use alloc::borrow::ToOwned;

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::alloc::{c_uint, Vec};
+use crate::external::{c_uint, Vec};
 
 use jni::objects::JClass;
 use jni::sys::jlong;

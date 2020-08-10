@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::alloc::c_uint;
-
 use parity_codec::{Decode, Encode};
 
 use crate::{KeyPair, PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH, SignerResult, Verifier};
 use crate::address::{address_decode, address_encode};
+use crate::external::{Box, String, ToString, Vec};
+use crate::external::c_uint;
 use crate::tx::{build_tx, verify_tx};
 use crate::tx::build_call;
 use crate::tx::types::{Call, Hash, Secret, Transaction};
-use crate::alloc::{Box, String, Vec, ToString};
 
 pub fn key_pair_generate() -> SignerResult<*mut KeyPair> {
     let key_pair = KeyPair::generate()?;

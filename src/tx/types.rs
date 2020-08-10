@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use serde::export::fmt::Debug;
 
 use crate::{PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH};
-use crate::alloc::Vec;
+use crate::external::Vec;
 pub use crate::tx::call::Call;
 use crate::tx::serde::SerdeHex;
 
