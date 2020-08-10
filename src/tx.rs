@@ -20,6 +20,7 @@ use crate::tx::types::{
     address_from_public, Address, Call, Era, Hash, Nonce, Secret, Signature, Transaction, HASH_LEN,
 };
 use crate::{KeyPair, SignerResult, Verifier, PUBLIC_KEY_LEN};
+use crate::alloc::Vec;
 
 pub mod call;
 mod serde;
@@ -136,7 +137,7 @@ mod tests {
         let (key_pair0, key_pair4) = get_key_pairs();
         let dest = address_from_public(&key_pair4.public_key());
         let dest = format!("0x{}", hex::encode(&dest.0[..]));
-        let value = 1000;
+        let value = 100;
 
         let module = call::balances::MODULE;
         let method = call::balances::TRANSFER;

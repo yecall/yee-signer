@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::fmt;
+use core::fmt;
 
 use parity_codec::{Compact, Decode, Encode};
+use serde::{de, Deserialize, Deserializer, ser::SerializeStruct, Serialize, Serializer};
 use serde::de::{MapAccess, SeqAccess, Unexpected, Visitor};
-use serde::{de, ser::SerializeStruct, Deserialize, Deserializer, Serialize, Serializer};
 
+use crate::alloc::Vec;
+use crate::alloc::Box;
 use crate::tx::types::{
     AccountId, Address, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
 };
@@ -40,8 +42,8 @@ pub enum Call {
 
 impl Serialize for Call {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
+        where
+            S: Serializer,
     {
         match self {
             Call::Timestamp(call) => match call {
@@ -148,18 +150,19 @@ impl Serialize for Call {
 
 impl<'de> Deserialize<'de> for Call {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
+        where
+            D: Deserializer<'de>,
     {
         enum Field {
             Module,
             Method,
             Params,
-        };
+        }
+        ;
         impl<'de> Deserialize<'de> for Field {
             fn deserialize<D>(deserializer: D) -> Result<Field, D::Error>
-            where
-                D: Deserializer<'de>,
+                where
+                    D: Deserializer<'de>,
             {
                 struct FieldVisitor;
 
@@ -171,8 +174,8 @@ impl<'de> Deserialize<'de> for Call {
                     }
 
                     fn visit_str<E>(self, value: &str) -> Result<Field, E>
-                    where
-                        E: de::Error,
+                        where
+                            E: de::Error,
                     {
                         match value {
                             "module" => Ok(Field::Module),
@@ -197,8 +200,8 @@ impl<'de> Deserialize<'de> for Call {
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Call, V::Error>
-            where
-                V: SeqAccess<'de>,
+                where
+                    V: SeqAccess<'de>,
             {
                 let module: u8 = seq
                     .next_element()?
@@ -215,7 +218,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     consensus::MODULE => match method {
@@ -244,7 +247,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     pow::MODULE => match method {
@@ -255,7 +258,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     indices::MODULE => {
@@ -275,7 +278,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     sharding::MODULE => match method {
@@ -286,7 +289,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     crfg::MODULE => match method {
@@ -300,7 +303,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     finality_tracker::MODULE => match method {
@@ -313,7 +316,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     assets::MODULE => match method {
@@ -327,7 +330,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     relay::MODULE => match method {
@@ -338,7 +341,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     storage::MODULE => match method {
@@ -349,7 +352,7 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     sudo::MODULE => match method {
@@ -361,22 +364,22 @@ impl<'de> Deserialize<'de> for Call {
                             return Err(de::Error::invalid_value(
                                 Unexpected::Unsigned(unknown as u64),
                                 &self,
-                            ))
+                            ));
                         }
                     },
                     unknown => {
                         return Err(de::Error::invalid_value(
                             Unexpected::Unsigned(unknown as u64),
                             &self,
-                        ))
+                        ));
                     }
                 };
                 Ok(call)
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<Call, V::Error>
-            where
-                V: MapAccess<'de>,
+                where
+                    V: MapAccess<'de>,
             {
                 let mut module = None;
                 let mut method = None;
@@ -410,7 +413,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 consensus::MODULE => match method {
@@ -439,7 +442,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 pow::MODULE => match method {
@@ -450,7 +453,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 indices::MODULE => {
@@ -470,7 +473,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 sharding::MODULE => match method {
@@ -481,7 +484,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 crfg::MODULE => match method {
@@ -495,7 +498,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 finality_tracker::MODULE => match method {
@@ -508,7 +511,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 assets::MODULE => match method {
@@ -522,7 +525,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 relay::MODULE => match method {
@@ -533,7 +536,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 storage::MODULE => match method {
@@ -544,7 +547,7 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 sudo::MODULE => match method {
@@ -556,14 +559,14 @@ impl<'de> Deserialize<'de> for Call {
                                         return Err(de::Error::invalid_value(
                                             Unexpected::Unsigned(unknown as u64),
                                             &self,
-                                        ))
+                                        ));
                                     }
                                 },
                                 unknown => {
                                     return Err(de::Error::invalid_value(
                                         Unexpected::Unsigned(unknown as u64),
                                         &self,
-                                    ))
+                                    ));
                                 }
                             });
                         }
@@ -622,10 +625,11 @@ pub mod timestamp {
 }
 
 pub mod consensus {
+    use super::{Decode, Deserialize, Encode, Serialize};
     use super::Bytes;
     use super::Key;
     use super::KeyValue;
-    use super::{Decode, Deserialize, Encode, Serialize};
+    use super::Vec;
 
     pub const MODULE: u8 = 0x01;
     pub const REPORT_MISBEHAVIOR: u8 = 0x00;
@@ -684,8 +688,8 @@ pub mod consensus {
 }
 
 pub mod pow {
-    use super::AccountId;
     use super::{Decode, Deserialize, Encode, Serialize};
+    use super::AccountId;
 
     pub const MODULE: u8 = 0x02;
 
@@ -724,8 +728,8 @@ pub mod indices {
 }
 
 pub mod balances {
-    use super::Address;
     use super::{Compact, Decode, Deserialize, Encode, Serialize};
+    use super::Address;
 
     pub const MODULE: u8 = 0x04;
 
@@ -782,8 +786,9 @@ pub mod sharding {
 }
 
 pub mod crfg {
-    use super::AuthorityId;
     use super::{Decode, Deserialize, Encode, Serialize};
+    use super::AuthorityId;
+    use super::Vec;
 
     pub const MODULE: u8 = 0x06;
 
@@ -809,8 +814,8 @@ pub mod crfg {
 }
 
 pub mod finality_tracker {
-    use super::BlockNumber;
     use super::{Decode, Deserialize, Encode, Serialize};
+    use super::BlockNumber;
 
     pub const MODULE: u8 = 0x07;
 
@@ -828,9 +833,9 @@ pub mod finality_tracker {
 }
 
 pub mod assets {
+    use super::{Compact, Decode, Deserialize, Encode, Serialize};
     use super::Address;
     use super::Bytes;
-    use super::{Compact, Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x08;
 
@@ -860,9 +865,9 @@ pub mod assets {
 }
 
 pub mod relay {
+    use super::{Compact, Decode, Deserialize, Encode, Serialize};
     use super::Bytes;
     use super::SerdeHash;
-    use super::{Compact, Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x09;
     pub const TRANSFER: u8 = 0x00;
@@ -889,8 +894,8 @@ pub mod relay {
 }
 
 pub mod storage {
-    use super::Bytes;
     use super::{Decode, Deserialize, Encode, Serialize};
+    use super::Bytes;
 
     pub const MODULE: u8 = 0x0a;
 
@@ -908,9 +913,11 @@ pub mod storage {
 }
 
 pub mod sudo {
+    use super::{Decode, Deserialize, Encode, Serialize};
     use super::Address;
     use super::Call as UniversalCall;
-    use super::{Decode, Deserialize, Encode, Serialize};
+    use super::Box;
+    use super::Vec;
 
     pub const MODULE: u8 = 0x0b;
     pub const SUDO: u8 = 0x00;

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::os::raw::c_uint;
+use crate::alloc::c_uint;
 
 use parity_codec::{Decode, Encode};
 
+use crate::{KeyPair, PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH, SignerResult, Verifier};
 use crate::address::{address_decode, address_encode};
+use crate::tx::{build_tx, verify_tx};
 use crate::tx::build_call;
 use crate::tx::types::{Call, Hash, Secret, Transaction};
-use crate::tx::{build_tx, verify_tx};
-use crate::{KeyPair, SignerResult, Verifier, PUBLIC_KEY_LEN, SECRET_KEY_LEN, SIGNATURE_LENGTH};
 
 pub fn key_pair_generate() -> SignerResult<*mut KeyPair> {
     let key_pair = KeyPair::generate()?;
@@ -136,8 +136,8 @@ pub fn vec_len(vec: *mut c_uint) -> SignerResult<c_uint> {
 }
 
 pub fn vec_copy<F>(vec: *mut c_uint, mut f: F) -> SignerResult<()>
-where
-    F: FnMut(&Vec<u8>) -> SignerResult<()>,
+    where
+        F: FnMut(&Vec<u8>) -> SignerResult<()>,
 {
     let vec = unsafe { Box::from_raw(vec as *mut Vec<u8>) };
     f(&vec)?;

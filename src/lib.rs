@@ -15,14 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with YeeChain.  If not, see <https://www.gnu.org/licenses/>.
 
-use schnorrkel::Keypair as SrKeyPair;
+#![cfg_attr(not(feature = "std"), no_std)]
+
 use schnorrkel::{MiniSecretKey, PublicKey, SecretKey};
+use schnorrkel::Keypair as SrKeyPair;
+
+use alloc::{String, ToString};
 
 pub mod address;
 pub mod ffi;
 pub mod jni;
 pub mod tx;
 
+mod alloc;
 mod error;
 mod export;
 
@@ -66,7 +71,7 @@ impl KeyPair {
     }
 
     pub fn sign(&self, message: &[u8], ctx: &[u8]) -> [u8; SIGNATURE_LENGTH] {
-        let ctx = unsafe { std::mem::transmute::<&[u8], &'static [u8]>(ctx) };
+        let ctx = unsafe { alloc::transmute::<&[u8], &'static [u8]>(ctx) };
         let signature = self.0.sign_simple(ctx, &message);
         signature.to_bytes()
     }
@@ -83,7 +88,7 @@ impl Verifier {
         let signature =
             schnorrkel::Signature::from_bytes(&signature).map_err(|_| "invalid signature")?;
 
-        let ctx = unsafe { std::mem::transmute::<&[u8], &'static [u8]>(ctx) };
+        let ctx = unsafe { alloc::transmute::<&[u8], &'static [u8]>(ctx) };
         let result = self.0.verify_simple(ctx, &message, &signature);
 
         let result = match result {
