@@ -21,6 +21,7 @@ use crate::address::{address_decode, address_encode};
 use crate::tx::{build_tx, verify_tx};
 use crate::tx::build_call;
 use crate::tx::types::{Call, Hash, Secret, Transaction};
+use crate::alloc::{Box, String, Vec, ToString};
 
 pub fn key_pair_generate() -> SignerResult<*mut KeyPair> {
     let key_pair = KeyPair::generate()?;
@@ -43,21 +44,21 @@ pub fn key_pair_from_secret_key(secret_key: &[u8]) -> SignerResult<*mut KeyPair>
 pub fn public_key(key_pair: *mut KeyPair) -> [u8; PUBLIC_KEY_LEN] {
     let key_pair = unsafe { Box::from_raw(key_pair) };
     let public_key_result = key_pair.public_key();
-    std::mem::forget(key_pair);
+    core::mem::forget(key_pair);
     public_key_result
 }
 
 pub fn secret_key(key_pair: *mut KeyPair) -> [u8; SECRET_KEY_LEN] {
     let key_pair = unsafe { Box::from_raw(key_pair) };
     let secret_key_result = key_pair.secret_key();
-    std::mem::forget(key_pair);
+    core::mem::forget(key_pair);
     secret_key_result
 }
 
 pub fn sign(key_pair: *mut KeyPair, message: &[u8], ctx: &[u8]) -> [u8; SIGNATURE_LENGTH] {
     let key_pair = unsafe { Box::from_raw(key_pair) };
     let result = key_pair.sign(message, ctx);
-    std::mem::forget(key_pair);
+    core::mem::forget(key_pair);
     result
 }
 
@@ -78,7 +79,7 @@ pub fn verify(
 ) -> SignerResult<()> {
     let verifier = unsafe { Box::from_raw(verifier) };
     let result = verifier.verify(signature, message, ctx);
-    std::mem::forget(verifier);
+    core::mem::forget(verifier);
     result
 }
 
@@ -108,7 +109,7 @@ pub fn common_build_tx(
 ) -> SignerResult<*mut c_uint> {
     let call = unsafe { Box::from_raw(call as *mut Call) };
     let call_clone = *call.clone();
-    std::mem::forget(call);
+    core::mem::forget(call);
     let tx = build_tx(secret_key, nonce, period, current, current_hash, call_clone)?;
     let result = Box::into_raw(Box::new(tx)) as *mut _;
     Ok(result)
@@ -124,14 +125,14 @@ pub fn tx_encode(tx: *mut c_uint) -> SignerResult<*mut c_uint> {
     let tx = unsafe { Box::from_raw(tx as *mut Transaction) };
     let encode = tx.encode();
     let result = Box::into_raw(Box::new(encode)) as *mut _;
-    std::mem::forget(tx);
+    core::mem::forget(tx);
     Ok(result)
 }
 
 pub fn vec_len(vec: *mut c_uint) -> SignerResult<c_uint> {
     let vec = unsafe { Box::from_raw(vec as *mut Vec<u8>) };
     let len = vec.len();
-    std::mem::forget(vec);
+    core::mem::forget(vec);
     Ok(len as c_uint)
 }
 
@@ -141,7 +142,7 @@ pub fn vec_copy<F>(vec: *mut c_uint, mut f: F) -> SignerResult<()>
 {
     let vec = unsafe { Box::from_raw(vec as *mut Vec<u8>) };
     f(&vec)?;
-    std::mem::forget(vec);
+    core::mem::forget(vec);
     Ok(())
 }
 
@@ -160,7 +161,7 @@ pub fn tx_decode(raw: &[u8]) -> SignerResult<*mut c_uint> {
 pub fn common_verify_tx(tx: *mut c_uint, current_hash: &Hash) -> SignerResult<()> {
     let tx = unsafe { Box::from_raw(tx as *mut Transaction) };
     let verified = verify_tx(&tx, &current_hash);
-    std::mem::forget(tx);
+    core::mem::forget(tx);
     verified
 }
 

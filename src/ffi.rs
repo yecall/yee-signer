@@ -17,7 +17,7 @@ use core::slice;
 
 use crate::{export, PUBLIC_KEY_LEN};
 use crate::{KeyPair, SECRET_KEY_LEN, SignerResult, Verifier};
-use crate::alloc::{c_uchar, c_uint, c_ulong};
+use crate::alloc::{c_uchar, c_uint, c_ulong, Vec, ToString};
 use crate::error::error_code;
 use crate::tx::types::HASH_LEN;
 

@@ -27,4 +27,9 @@ hex = "0.3.2"
 [features]
 default = ["std"]
 std = [
+    "schnorrkel/std",
+    "parity-codec/std",
+    "serde/std",
+    "serde_json/std",
+    "rand/std",
 ]
