@@ -353,6 +353,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2839e79665f131bdb5782e51f2c6c9599c133c6098982a54c794358bf432529c"
 
 [[package]]
+name = "packed_simd"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a85ea9fc0d4ac0deb6fe7911d38786b32fc11119afd9e9d38b84ff691ce64220"
+dependencies = [
+ "cfg-if",
+]
+
+[[package]]
 name = "parity-codec"
 version = "3.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -428,6 +437,7 @@ checksum = "6d71dacdc3c88c1fde3885a3be3fbab9f35724e6ce99467f7d9c5026132184ca"
 dependencies = [
  "autocfg",
  "libc",
+ "packed_simd",
  "rand_chacha",
  "rand_core 0.4.2",
  "rand_hc",
@@ -564,9 +574,8 @@ dependencies = [
 
 [[package]]
 name = "schnorrkel"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5eff518f9bed3d803a0d002af0ab96339b0ebbedde3bec98a684986134b7a39"
+version = "0.0.0"
+source = "git+https://github.com/w3f/schnorrkel?rev=d3289df76b8ae6dfb68e733204c5c009df5343a9#d3289df76b8ae6dfb68e733204c5c009df5343a9"
 dependencies = [
  "clear_on_drop",
  "curve25519-dalek",
