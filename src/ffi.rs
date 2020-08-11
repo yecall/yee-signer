@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::os::raw::{c_uchar, c_uint, c_ulong};
-use std::ptr::null_mut;
-use std::slice;
+use core::ptr::null_mut;
+use core::slice;
 
-use crate::error::error_result_ffi;
-use crate::tx::types::HASH_LEN;
 use crate::{export, PUBLIC_KEY_LEN};
-use crate::{KeyPair, SignerResult, Verifier, SECRET_KEY_LEN};
+use crate::{KeyPair, SECRET_KEY_LEN, SignerResult, Verifier};
+use crate::external::{c_uchar, c_uint, c_ulong, Vec, ToString};
+use crate::error::error_code;
+use crate::tx::types::HASH_LEN;
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_generate(err: *mut c_uint) -> *mut c_uint {
@@ -369,4 +369,17 @@ pub extern "C" fn yee_signer_address_decode(
     };
 
     error_result_ffi(run, (), error)
+}
+
+fn error_result_ffi<R, T>(run: R, default: T, err: *mut c_uint) -> T
+    where
+        R: Fn() -> SignerResult<T>,
+{
+    match run() {
+        Ok(r) => r,
+        Err(e) => {
+            unsafe { *err = error_code(&e) as c_uint };
+            default
+        }
+    }
 }

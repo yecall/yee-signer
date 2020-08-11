@@ -20,6 +20,7 @@ use crate::tx::types::{
     address_from_public, Address, Call, Era, Hash, Nonce, Secret, Signature, Transaction, HASH_LEN,
 };
 use crate::{KeyPair, SignerResult, Verifier, PUBLIC_KEY_LEN};
+use crate::external::Vec;
 
 pub mod call;
 mod serde;
@@ -136,7 +137,7 @@ mod tests {
         let (key_pair0, key_pair4) = get_key_pairs();
         let dest = address_from_public(&key_pair4.public_key());
         let dest = format!("0x{}", hex::encode(&dest.0[..]));
-        let value = 1000;
+        let value = 100;
 
         let module = call::balances::MODULE;
         let method = call::balances::TRANSFER;
@@ -144,6 +145,7 @@ mod tests {
             r#"{{ "module":{}, "method":{}, "params":{{"dest":"{}","value":{}}}}}"#,
             module, method, dest, value
         );
+        #[cfg(feature = "std")]
         println!("call: {}", call);
 
         let call = build_call(call.as_bytes()).unwrap();
@@ -168,6 +170,7 @@ mod tests {
             r#"{{ "module":{}, "method":{}, "params":{{"addresses":["{}"]}}}}"#,
             module, method, address
         );
+        #[cfg(feature = "std")]
         println!("call: {}", call);
 
         let call = build_call(call.as_bytes()).unwrap();
@@ -195,6 +198,7 @@ mod tests {
             r#"{{ "module":{}, "method":{}, "params":{{"proposal":{{"module":{},"method":{},"params":{{"authorities":[["{}",{}]],"median":{}}}}}}}}}"#,
             module, method, crfg_module, crfg_method, authority_id, weight, median
         );
+        #[cfg(feature = "std")]
         println!("call: {}", call);
 
         let call = build_call(call.as_bytes()).unwrap();
@@ -221,6 +225,7 @@ mod tests {
 
         let tx = tx.encode();
 
+        #[cfg(feature = "std")]
         println!("tx: 0x{}", hex::encode(&tx));
 
         assert_eq!(tx.len(), expected_len);

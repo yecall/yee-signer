@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use serde::export::fmt::Display;
 use serde::{Deserializer, Serializer};
-use std::io;
+use serde::export::fmt::Display;
+
+use crate::external::String;
+use crate::external::Vec;
+use crate::external::ToOwned;
 
 pub trait SerdeHex: Sized {
     type Error: Display;
@@ -24,8 +27,8 @@ pub trait SerdeHex: Sized {
     fn from_bytes(src: &[u8]) -> Result<Self, Self::Error>;
 
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
+        where
+            S: Serializer,
     {
         use serde::ser::Error;
         let bytes = self.into_bytes().map_err(S::Error::custom)?;
@@ -35,8 +38,8 @@ pub trait SerdeHex: Sized {
 
     /// Attempt to deserialize a hexadecimal string into an instance of `Self`.
     fn deserialize<'de, D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
+        where
+            D: Deserializer<'de>,
     {
         use serde::de::Error;
 
@@ -47,7 +50,7 @@ pub trait SerdeHex: Sized {
 }
 
 impl SerdeHex for [u8; 33] {
-    type Error = io::Error;
+    type Error = String;
 
     fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
         Ok(self.to_vec())
@@ -61,7 +64,7 @@ impl SerdeHex for [u8; 33] {
 }
 
 impl SerdeHex for [u8; 32] {
-    type Error = io::Error;
+    type Error = String;
 
     fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
         Ok(self.to_vec())
@@ -75,7 +78,7 @@ impl SerdeHex for [u8; 32] {
 }
 
 impl SerdeHex for Vec<u8> {
-    type Error = io::Error;
+    type Error = String;
 
     fn into_bytes(&self) -> Result<Vec<u8>, Self::Error> {
         Ok(self.to_owned())
