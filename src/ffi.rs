@@ -23,363 +23,363 @@ use crate::{KeyPair, SignerResult, Verifier, SECRET_KEY_LEN};
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_generate(err: *mut c_uint) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let result = export::key_pair_generate()?;
+	let run = || -> SignerResult<*mut c_uint> {
+		let result = export::key_pair_generate()?;
 
-        Ok(result as *mut _)
-    };
-    error_result_ffi(run, null_mut() as *mut _, err)
+		Ok(result as *mut _)
+	};
+	error_result_ffi(run, null_mut() as *mut _, err)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_from_mini_secret_key(
-    mini_secret_key: *const c_uchar,
-    mini_secret_key_len: c_uint,
-    err: *mut c_uint,
+	mini_secret_key: *const c_uchar,
+	mini_secret_key_len: c_uint,
+	err: *mut c_uint,
 ) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let mini_secret_key =
-            unsafe { slice::from_raw_parts(mini_secret_key, mini_secret_key_len as usize) };
+	let run = || -> SignerResult<*mut c_uint> {
+		let mini_secret_key =
+			unsafe { slice::from_raw_parts(mini_secret_key, mini_secret_key_len as usize) };
 
-        let result = export::key_pair_from_mini_secret_key(mini_secret_key)?;
+		let result = export::key_pair_from_mini_secret_key(mini_secret_key)?;
 
-        Ok(result as *mut _)
-    };
+		Ok(result as *mut _)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, err)
+	error_result_ffi(run, null_mut() as *mut _, err)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_from_secret_key(
-    secret_key: *const c_uchar,
-    secret_key_len: c_uint,
-    err: *mut c_uint,
+	secret_key: *const c_uchar,
+	secret_key_len: c_uint,
+	err: *mut c_uint,
 ) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let secret_key = unsafe { slice::from_raw_parts(secret_key, secret_key_len as usize) };
+	let run = || -> SignerResult<*mut c_uint> {
+		let secret_key = unsafe { slice::from_raw_parts(secret_key, secret_key_len as usize) };
 
-        let result = export::key_pair_from_secret_key(secret_key)?;
+		let result = export::key_pair_from_secret_key(secret_key)?;
 
-        Ok(result as *mut _)
-    };
+		Ok(result as *mut _)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, err)
+	error_result_ffi(run, null_mut() as *mut _, err)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_public_key(
-    key_pair: *mut c_uint,
-    out: *mut c_uchar,
-    out_len: c_uint,
-    _err: *mut c_uint,
+	key_pair: *mut c_uint,
+	out: *mut c_uchar,
+	out_len: c_uint,
+	_err: *mut c_uint,
 ) {
-    let key_pair = key_pair as *mut KeyPair;
-    let result = export::public_key(key_pair);
+	let key_pair = key_pair as *mut KeyPair;
+	let result = export::public_key(key_pair);
 
-    let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
+	let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
 
-    out.copy_from_slice(&result);
+	out.copy_from_slice(&result);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_secret_key(
-    key_pair: *mut c_uint,
-    out: *mut c_uchar,
-    out_len: c_uint,
-    _err: *mut c_uint,
+	key_pair: *mut c_uint,
+	out: *mut c_uchar,
+	out_len: c_uint,
+	_err: *mut c_uint,
 ) {
-    let key_pair = key_pair as *mut KeyPair;
-    let result = export::secret_key(key_pair);
-    let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
+	let key_pair = key_pair as *mut KeyPair;
+	let result = export::secret_key(key_pair);
+	let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
 
-    out.copy_from_slice(&result);
+	out.copy_from_slice(&result);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_sign(
-    key_pair: *mut c_uint,
-    message: *const c_uchar,
-    message_len: c_uint,
-    out: *mut c_uchar,
-    out_len: c_uint,
-    ctx: *const c_uchar,
-    ctx_len: c_uint,
-    _err: *mut c_uint,
+	key_pair: *mut c_uint,
+	message: *const c_uchar,
+	message_len: c_uint,
+	out: *mut c_uchar,
+	out_len: c_uint,
+	ctx: *const c_uchar,
+	ctx_len: c_uint,
+	_err: *mut c_uint,
 ) {
-    let key_pair = key_pair as *mut KeyPair;
-    let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
-    let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
+	let key_pair = key_pair as *mut KeyPair;
+	let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
+	let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
 
-    let result = export::sign(key_pair, message, ctx);
+	let result = export::sign(key_pair, message, ctx);
 
-    let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
-    out.copy_from_slice(&result);
+	let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
+	out.copy_from_slice(&result);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_free(key_pair: *mut c_uint, _err: *mut c_uint) {
-    export::key_pair_free(key_pair as *mut KeyPair);
+	export::key_pair_free(key_pair as *mut KeyPair);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_verifier_from_public_key(
-    public_key: *const c_uchar,
-    public_key_len: c_uint,
-    err: *mut c_uint,
+	public_key: *const c_uchar,
+	public_key_len: c_uint,
+	err: *mut c_uint,
 ) -> *mut c_uint {
-    let public_key = unsafe { slice::from_raw_parts(public_key, public_key_len as usize) };
+	let public_key = unsafe { slice::from_raw_parts(public_key, public_key_len as usize) };
 
-    let run = || -> SignerResult<*mut c_uint> {
-        let result = export::verifier_from_public_key(public_key)?;
-        Ok(result as *mut c_uint)
-    };
+	let run = || -> SignerResult<*mut c_uint> {
+		let result = export::verifier_from_public_key(public_key)?;
+		Ok(result as *mut c_uint)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, err)
+	error_result_ffi(run, null_mut() as *mut _, err)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_verify(
-    verifier: *mut c_uint,
-    signature: *const c_uchar,
-    signature_len: c_uint,
-    message: *const c_uchar,
-    message_len: c_uint,
-    ctx: *const c_uchar,
-    ctx_len: c_uint,
-    err: *mut c_uint,
+	verifier: *mut c_uint,
+	signature: *const c_uchar,
+	signature_len: c_uint,
+	message: *const c_uchar,
+	message_len: c_uint,
+	ctx: *const c_uchar,
+	ctx_len: c_uint,
+	err: *mut c_uint,
 ) {
-    let verifier = verifier as *mut Verifier;
+	let verifier = verifier as *mut Verifier;
 
-    let signature = unsafe { slice::from_raw_parts(signature, signature_len as usize) };
-    let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
-    let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
+	let signature = unsafe { slice::from_raw_parts(signature, signature_len as usize) };
+	let message = unsafe { slice::from_raw_parts(message, message_len as usize) };
+	let ctx = unsafe { slice::from_raw_parts(ctx, ctx_len as usize) };
 
-    let run = || -> SignerResult<()> {
-        export::verify(verifier, signature, message, ctx)?;
-        Ok(())
-    };
+	let run = || -> SignerResult<()> {
+		export::verify(verifier, signature, message, ctx)?;
+		Ok(())
+	};
 
-    error_result_ffi(run, (), err);
+	error_result_ffi(run, (), err);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_verifier_free(verifier: *mut c_uint, _err: *mut c_uint) {
-    export::verifier_free(verifier as *mut Verifier);
+	export::verifier_free(verifier as *mut Verifier);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_build_call(
-    json: *const c_uchar,
-    json_len: c_uint,
-    error: *mut c_uint,
+	json: *const c_uchar,
+	json_len: c_uint,
+	error: *mut c_uint,
 ) -> *mut c_uint {
-    let json = unsafe { slice::from_raw_parts(json, json_len as usize) };
+	let json = unsafe { slice::from_raw_parts(json, json_len as usize) };
 
-    let run = || -> SignerResult<*mut c_uint> { export::common_build_call(json) };
+	let run = || -> SignerResult<*mut c_uint> { export::common_build_call(json) };
 
-    error_result_ffi(run, null_mut() as *mut _, error)
+	error_result_ffi(run, null_mut() as *mut _, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_call_free(call: *mut c_uint, error: *mut c_uint) {
-    let run = || -> SignerResult<()> { export::call_free(call) };
+	let run = || -> SignerResult<()> { export::call_free(call) };
 
-    error_result_ffi(run, (), error)
+	error_result_ffi(run, (), error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_build_tx(
-    secret_key: *const c_uchar,
-    secret_key_len: c_uint,
-    nonce: c_ulong,
-    period: c_ulong,
-    current: c_ulong,
-    current_hash: *const c_uchar,
-    current_hash_len: c_uint,
-    call: *mut c_uint,
-    error: *mut c_uint,
+	secret_key: *const c_uchar,
+	secret_key_len: c_uint,
+	nonce: c_ulong,
+	period: c_ulong,
+	current: c_ulong,
+	current_hash: *const c_uchar,
+	current_hash_len: c_uint,
+	call: *mut c_uint,
+	error: *mut c_uint,
 ) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let secret_key = {
-            let mut tmp = [0u8; SECRET_KEY_LEN];
-            tmp.copy_from_slice(unsafe {
-                slice::from_raw_parts(secret_key, secret_key_len as usize)
-            });
-            tmp
-        };
+	let run = || -> SignerResult<*mut c_uint> {
+		let secret_key = {
+			let mut tmp = [0u8; SECRET_KEY_LEN];
+			tmp.copy_from_slice(unsafe {
+				slice::from_raw_parts(secret_key, secret_key_len as usize)
+			});
+			tmp
+		};
 
-        let nonce = nonce as u64;
-        let period = period as u64;
-        let current = current as u64;
+		let nonce = nonce as u64;
+		let period = period as u64;
+		let current = current as u64;
 
-        let current_hash = {
-            let mut tmp = [0u8; HASH_LEN];
-            tmp.copy_from_slice(unsafe {
-                slice::from_raw_parts(current_hash, current_hash_len as usize)
-            });
-            tmp
-        };
+		let current_hash = {
+			let mut tmp = [0u8; HASH_LEN];
+			tmp.copy_from_slice(unsafe {
+				slice::from_raw_parts(current_hash, current_hash_len as usize)
+			});
+			tmp
+		};
 
-        export::common_build_tx(secret_key, nonce, period, current, current_hash, call)
-    };
+		export::common_build_tx(secret_key, nonce, period, current, current_hash, call)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, error)
+	error_result_ffi(run, null_mut() as *mut _, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_tx_free(tx: *mut c_uint, error: *mut c_uint) {
-    let run = || -> SignerResult<()> { export::tx_free(tx) };
+	let run = || -> SignerResult<()> { export::tx_free(tx) };
 
-    error_result_ffi(run, (), error)
+	error_result_ffi(run, (), error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_tx_encode(tx: *mut c_uint, error: *mut c_uint) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let result = export::tx_encode(tx)?;
-        Ok(result)
-    };
+	let run = || -> SignerResult<*mut c_uint> {
+		let result = export::tx_encode(tx)?;
+		Ok(result)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, error)
+	error_result_ffi(run, null_mut() as *mut _, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_vec_len(vec: *mut c_uint, error: *mut c_uint) -> c_uint {
-    let run = || -> SignerResult<c_uint> {
-        let result = export::vec_len(vec)?;
-        Ok(result)
-    };
+	let run = || -> SignerResult<c_uint> {
+		let result = export::vec_len(vec)?;
+		Ok(result)
+	};
 
-    error_result_ffi(run, 0, error)
+	error_result_ffi(run, 0, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_vec_copy(
-    vec: *mut c_uint,
-    out: *mut c_uchar,
-    out_len: c_uint,
-    error: *mut c_uint,
+	vec: *mut c_uint,
+	out: *mut c_uchar,
+	out_len: c_uint,
+	error: *mut c_uint,
 ) {
-    let run = || -> SignerResult<()> {
-        let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
+	let run = || -> SignerResult<()> {
+		let out = unsafe { slice::from_raw_parts_mut(out, out_len as usize) };
 
-        let f = |vec: &Vec<u8>| {
-            out.copy_from_slice(vec);
-            Ok(())
-        };
+		let f = |vec: &Vec<u8>| {
+			out.copy_from_slice(vec);
+			Ok(())
+		};
 
-        export::vec_copy(vec, f)?;
-        Ok(())
-    };
+		export::vec_copy(vec, f)?;
+		Ok(())
+	};
 
-    error_result_ffi(run, (), error)
+	error_result_ffi(run, (), error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_vec_free(vec: *mut c_uint, error: *mut c_uint) {
-    let run = || -> SignerResult<()> {
-        export::vec_free(vec)?;
-        Ok(())
-    };
+	let run = || -> SignerResult<()> {
+		export::vec_free(vec)?;
+		Ok(())
+	};
 
-    error_result_ffi(run, (), error);
+	error_result_ffi(run, (), error);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_tx_decode(
-    raw: *const c_uchar,
-    raw_len: c_uint,
-    error: *mut c_uint,
+	raw: *const c_uchar,
+	raw_len: c_uint,
+	error: *mut c_uint,
 ) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        let raw = unsafe { slice::from_raw_parts(raw, raw_len as usize) };
+	let run = || -> SignerResult<*mut c_uint> {
+		let raw = unsafe { slice::from_raw_parts(raw, raw_len as usize) };
 
-        let tx = export::tx_decode(raw)?;
+		let tx = export::tx_decode(raw)?;
 
-        Ok(tx)
-    };
+		Ok(tx)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, error)
+	error_result_ffi(run, null_mut() as *mut _, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_verify_tx(
-    tx: *mut c_uint,
-    current_hash: *const c_uchar,
-    current_hash_len: c_uint,
-    error: *mut c_uint,
+	tx: *mut c_uint,
+	current_hash: *const c_uchar,
+	current_hash_len: c_uint,
+	error: *mut c_uint,
 ) {
-    let run = || -> SignerResult<()> {
-        let current_hash = {
-            let mut tmp = [0u8; HASH_LEN];
-            tmp.copy_from_slice(unsafe {
-                slice::from_raw_parts(current_hash, current_hash_len as usize)
-            });
-            tmp
-        };
+	let run = || -> SignerResult<()> {
+		let current_hash = {
+			let mut tmp = [0u8; HASH_LEN];
+			tmp.copy_from_slice(unsafe {
+				slice::from_raw_parts(current_hash, current_hash_len as usize)
+			});
+			tmp
+		};
 
-        export::common_verify_tx(tx, &current_hash)
-    };
+		export::common_verify_tx(tx, &current_hash)
+	};
 
-    error_result_ffi(run, (), error);
+	error_result_ffi(run, (), error);
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_address_encode(
-    public_key: *const c_uchar,
-    public_key_len: c_uint,
-    hrp: *const c_uchar,
-    hrp_len: c_uint,
-    error: *mut c_uint,
+	public_key: *const c_uchar,
+	public_key_len: c_uint,
+	hrp: *const c_uchar,
+	hrp_len: c_uint,
+	error: *mut c_uint,
 ) -> *mut c_uint {
-    let run = || -> SignerResult<*mut c_uint> {
-        if public_key_len as usize != PUBLIC_KEY_LEN {
-            return Err("address encode error".to_string());
-        }
-        let public_key = {
-            let mut tmp = [0u8; PUBLIC_KEY_LEN];
-            tmp.copy_from_slice(unsafe {
-                slice::from_raw_parts(public_key, public_key_len as usize)
-            });
-            tmp
-        };
-        let hrp = unsafe { slice::from_raw_parts(hrp, hrp_len as usize) };
-        let address = export::common_address_encode(&public_key, &hrp)?;
-        Ok(address as *mut _)
-    };
+	let run = || -> SignerResult<*mut c_uint> {
+		if public_key_len as usize != PUBLIC_KEY_LEN {
+			return Err("address encode error".to_string());
+		}
+		let public_key = {
+			let mut tmp = [0u8; PUBLIC_KEY_LEN];
+			tmp.copy_from_slice(unsafe {
+				slice::from_raw_parts(public_key, public_key_len as usize)
+			});
+			tmp
+		};
+		let hrp = unsafe { slice::from_raw_parts(hrp, hrp_len as usize) };
+		let address = export::common_address_encode(&public_key, &hrp)?;
+		Ok(address as *mut _)
+	};
 
-    error_result_ffi(run, null_mut() as *mut _, error)
+	error_result_ffi(run, null_mut() as *mut _, error)
 }
 
 #[no_mangle]
 pub extern "C" fn yee_signer_address_decode(
-    address: *const c_uchar,
-    address_len: c_uint,
-    public_key_pointer: *mut *mut c_uint,
-    hrp_pointer: *mut *mut c_uint,
-    error: *mut c_uint,
+	address: *const c_uchar,
+	address_len: c_uint,
+	public_key_pointer: *mut *mut c_uint,
+	hrp_pointer: *mut *mut c_uint,
+	error: *mut c_uint,
 ) {
-    let run = || -> SignerResult<()> {
-        let address = unsafe { slice::from_raw_parts(address, address_len as usize) };
-        let (public_key, hrp) = export::common_address_decode(&address)?;
+	let run = || -> SignerResult<()> {
+		let address = unsafe { slice::from_raw_parts(address, address_len as usize) };
+		let (public_key, hrp) = export::common_address_decode(&address)?;
 
-        unsafe { *public_key_pointer = public_key };
-        unsafe { *hrp_pointer = hrp };
-        Ok(())
-    };
+		unsafe { *public_key_pointer = public_key };
+		unsafe { *hrp_pointer = hrp };
+		Ok(())
+	};
 
-    error_result_ffi(run, (), error)
+	error_result_ffi(run, (), error)
 }
 
 fn error_result_ffi<R, T>(run: R, default: T, err: *mut c_uint) -> T
 where
-    R: Fn() -> SignerResult<T>,
+	R: Fn() -> SignerResult<T>,
 {
-    match run() {
-        Ok(r) => r,
-        Err(e) => {
-            unsafe { *err = error_code(&e) as c_uint };
-            default
-        }
-    }
+	match run() {
+		Ok(r) => r,
+		Err(e) => {
+			unsafe { *err = error_code(&e) as c_uint };
+			default
+		}
+	}
 }

@@ -13,17 +13,17 @@
 // limitations under the License.
 
 pub fn error_code(error: &str) -> i8 {
-    match error {
-        "invalid mini secret key" => 2,
-        "invalid secret key" => 3,
-        "invalid public key" => 4,
-        "invalid signature" => 5,
-        "jni error" => 6,
-        "invalid method" => 7,
-        "invalid tx" => 8,
-        "invalid json" => 9,
-        "address encode error" => 10,
-        "address decode error" => 11,
-        _ => 1,
-    }
+	match error {
+		"invalid mini secret key" => 2,
+		"invalid secret key" => 3,
+		"invalid public key" => 4,
+		"invalid signature" => 5,
+		"jni error" => 6,
+		"invalid method" => 7,
+		"invalid tx" => 8,
+		"invalid json" => 9,
+		"address encode error" => 10,
+		"address decode error" => 11,
+		_ => 1,
+	}
 }
