@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::external::{c_uint, Vec};
-
 use jni::objects::JClass;
 use jni::sys::jlong;
 use jni::sys::{jbyteArray, jlongArray};
@@ -21,6 +19,7 @@ use jni::JNIEnv;
 
 use crate::error::error_code;
 use crate::export;
+use crate::external::{c_uint, Vec};
 use crate::tx::types::HASH_LEN;
 use crate::{KeyPair, SignerResult, Verifier, SECRET_KEY_LEN};
 
@@ -446,8 +445,8 @@ pub extern "system" fn Java_io_yeeco_yeesigner_JNI_addressDecode(
 }
 
 fn error_result_jni<R, T>(run: R, default: T, env: &JNIEnv, error: jbyteArray) -> T
-    where
-        R: Fn() -> SignerResult<T>,
+where
+    R: Fn() -> SignerResult<T>,
 {
     match run() {
         Ok(r) => r,

@@ -15,14 +15,14 @@
 use blake2_rfc;
 use parity_codec::Encode;
 use parity_codec::{Compact, Decode, Input};
+use regex::Regex;
 
+use crate::address::address_decode;
+use crate::external::Vec;
 use crate::tx::types::{
     account_from_public, Account, Call, Era, Hash, Nonce, Secret, Signature, Transaction, HASH_LEN,
 };
 use crate::{KeyPair, SignerResult, Verifier, PUBLIC_KEY_LEN};
-use crate::external::Vec;
-use regex::Regex;
-use crate::address::address_decode;
 
 pub mod call;
 mod serde;
@@ -132,9 +132,9 @@ fn blake2_256_into(data: &[u8], dest: &mut [u8; 32]) {
 }
 
 fn replace_address(json: &str) -> SignerResult<String> {
-    let pattern = Regex::new(r#""((yee|tyee)[^"]+)""#).map_err(|_|"failed to replace address")?;
+    let pattern = Regex::new(r#""((yee|tyee)[^"]+)""#).map_err(|_| "failed to replace address")?;
 
-    let mut error  = false;
+    let mut error = false;
     let replaced = pattern.replace_all(json.as_ref(), |captures: &regex::Captures| {
         let address = &captures[1];
         let public_key = match address_decode(address) {
@@ -157,22 +157,30 @@ fn replace_address(json: &str) -> SignerResult<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use parity_codec::Decode;
+
     use crate::address::address_encode;
+
+    use super::*;
 
     #[test]
     fn test_replace_address() {
         let call = r#"{ "module":4, "method":0, "params":{"dest":"yee15c2cc2uj34w5jkfzxe4dndpnngprxe4nytaj9axmzf63ur4f8awq2gafdf","value":100}}"#;
         let replaced = replace_address(call).unwrap();
-        assert_eq!(replaced, r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#);
+        assert_eq!(
+            replaced,
+            r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#
+        );
     }
 
     #[test]
     fn test_replace_address_testnet() {
         let call = r#"{ "module":4, "method":0, "params":{"dest":"tyee15c2cc2uj34w5jkfzxe4dndpnngprxe4nytaj9axmzf63ur4f8awq806lv6","value":100}}"#;
         let replaced = replace_address(call).unwrap();
-        assert_eq!(replaced, r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#);
+        assert_eq!(
+            replaced,
+            r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#
+        );
     }
 
     #[test]

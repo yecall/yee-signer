@@ -15,13 +15,13 @@
 use core::fmt;
 
 use parity_codec::{Compact, Decode, Encode};
-use serde::{de, Deserialize, Deserializer, ser::SerializeStruct, Serialize, Serializer};
 use serde::de::{MapAccess, SeqAccess, Unexpected, Visitor};
+use serde::{de, ser::SerializeStruct, Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::external::Vec;
 use crate::external::Box;
+use crate::external::Vec;
 use crate::tx::types::{
-    AccountId, Account, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
+    Account, AccountId, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
 };
 
 #[derive(Encode, Decode, Clone, Debug)]
@@ -42,8 +42,8 @@ pub enum Call {
 
 impl Serialize for Call {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         match self {
             Call::Timestamp(call) => match call {
@@ -150,19 +150,18 @@ impl Serialize for Call {
 
 impl<'de> Deserialize<'de> for Call {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         enum Field {
             Module,
             Method,
             Params,
-        }
-        ;
+        };
         impl<'de> Deserialize<'de> for Field {
             fn deserialize<D>(deserializer: D) -> Result<Field, D::Error>
-                where
-                    D: Deserializer<'de>,
+            where
+                D: Deserializer<'de>,
             {
                 struct FieldVisitor;
 
@@ -174,8 +173,8 @@ impl<'de> Deserialize<'de> for Call {
                     }
 
                     fn visit_str<E>(self, value: &str) -> Result<Field, E>
-                        where
-                            E: de::Error,
+                    where
+                        E: de::Error,
                     {
                         match value {
                             "module" => Ok(Field::Module),
@@ -200,8 +199,8 @@ impl<'de> Deserialize<'de> for Call {
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Call, V::Error>
-                where
-                    V: SeqAccess<'de>,
+            where
+                V: SeqAccess<'de>,
             {
                 let module: u8 = seq
                     .next_element()?
@@ -378,8 +377,8 @@ impl<'de> Deserialize<'de> for Call {
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<Call, V::Error>
-                where
-                    V: MapAccess<'de>,
+            where
+                V: MapAccess<'de>,
             {
                 let mut module = None;
                 let mut method = None;
@@ -625,11 +624,11 @@ pub mod timestamp {
 }
 
 pub mod consensus {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::Bytes;
     use super::Key;
     use super::KeyValue;
     use super::Vec;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x01;
     pub const REPORT_MISBEHAVIOR: u8 = 0x00;
@@ -688,8 +687,8 @@ pub mod consensus {
 }
 
 pub mod pow {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::AccountId;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x02;
 
@@ -728,8 +727,8 @@ pub mod indices {
 }
 
 pub mod balances {
-    use super::{Compact, Decode, Deserialize, Encode, Serialize};
     use super::Account;
+    use super::{Compact, Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x04;
 
@@ -786,9 +785,9 @@ pub mod sharding {
 }
 
 pub mod crfg {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::AuthorityId;
     use super::Vec;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x06;
 
@@ -814,8 +813,8 @@ pub mod crfg {
 }
 
 pub mod finality_tracker {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::BlockNumber;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x07;
 
@@ -833,9 +832,9 @@ pub mod finality_tracker {
 }
 
 pub mod assets {
-    use super::{Compact, Decode, Deserialize, Encode, Serialize};
     use super::Account;
     use super::Bytes;
+    use super::{Compact, Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x08;
 
@@ -865,9 +864,9 @@ pub mod assets {
 }
 
 pub mod relay {
-    use super::{Compact, Decode, Deserialize, Encode, Serialize};
     use super::Bytes;
     use super::SerdeHash;
+    use super::{Compact, Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x09;
     pub const TRANSFER: u8 = 0x00;
@@ -894,8 +893,8 @@ pub mod relay {
 }
 
 pub mod storage {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::Bytes;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x0a;
 
@@ -913,11 +912,11 @@ pub mod storage {
 }
 
 pub mod sudo {
-    use super::{Decode, Deserialize, Encode, Serialize};
     use super::Account;
-    use super::Call as UniversalCall;
     use super::Box;
+    use super::Call as UniversalCall;
     use super::Vec;
+    use super::{Decode, Deserialize, Encode, Serialize};
 
     pub const MODULE: u8 = 0x0b;
     pub const SUDO: u8 = 0x00;

@@ -21,8 +21,8 @@
 #[macro_use]
 pub extern crate alloc;
 
-use schnorrkel::{MiniSecretKey, PublicKey, SecretKey};
 use schnorrkel::Keypair as SrKeyPair;
+use schnorrkel::{MiniSecretKey, PublicKey, SecretKey};
 
 use external::{String, ToString};
 
@@ -31,9 +31,9 @@ pub mod ffi;
 pub mod jni;
 pub mod tx;
 
-mod external;
 mod error;
 mod export;
+mod external;
 
 pub struct KeyPair(SrKeyPair);
 

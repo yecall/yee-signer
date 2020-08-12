@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use serde::{Deserializer, Serializer};
 use serde::export::fmt::Display;
+use serde::{Deserializer, Serializer};
 
 use crate::external::String;
-use crate::external::Vec;
 use crate::external::ToOwned;
+use crate::external::Vec;
 
 pub trait SerdeHex: Sized {
     type Error: Display;
@@ -27,8 +27,8 @@ pub trait SerdeHex: Sized {
     fn from_bytes(src: &[u8]) -> Result<Self, Self::Error>;
 
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         use serde::ser::Error;
         let bytes = self.into_bytes().map_err(S::Error::custom)?;
@@ -38,8 +38,8 @@ pub trait SerdeHex: Sized {
 
     /// Attempt to deserialize a hexadecimal string into an instance of `Self`.
     fn deserialize<'de, D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         use serde::de::Error;
 

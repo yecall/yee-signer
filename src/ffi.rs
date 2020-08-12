@@ -15,11 +15,11 @@
 use core::ptr::null_mut;
 use core::slice;
 
-use crate::{export, PUBLIC_KEY_LEN};
-use crate::{KeyPair, SECRET_KEY_LEN, SignerResult, Verifier};
-use crate::external::{c_uchar, c_uint, c_ulong, Vec, ToString};
 use crate::error::error_code;
+use crate::external::{c_uchar, c_uint, c_ulong, ToString, Vec};
 use crate::tx::types::HASH_LEN;
+use crate::{export, PUBLIC_KEY_LEN};
+use crate::{KeyPair, SignerResult, Verifier, SECRET_KEY_LEN};
 
 #[no_mangle]
 pub extern "C" fn yee_signer_key_pair_generate(err: *mut c_uint) -> *mut c_uint {
@@ -372,8 +372,8 @@ pub extern "C" fn yee_signer_address_decode(
 }
 
 fn error_result_ffi<R, T>(run: R, default: T, err: *mut c_uint) -> T
-    where
-        R: Fn() -> SignerResult<T>,
+where
+    R: Fn() -> SignerResult<T>,
 {
     match run() {
         Ok(r) => r,
