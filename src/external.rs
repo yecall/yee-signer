@@ -17,11 +17,12 @@
 
 #![allow(non_camel_case_types)]
 
-pub use alloc::string::{String, ToString};
-pub use alloc::boxed::Box;
 pub use alloc::borrow::ToOwned;
+pub use alloc::boxed::Box;
+pub use alloc::string::{String, ToString};
 pub use alloc::vec::Vec;
 pub use core::intrinsics::transmute;
+
 pub type c_uchar = u8;
 pub type c_uint = u32;
 pub type c_ulong = u64;
