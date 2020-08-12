@@ -21,7 +21,7 @@ use serde::de::{MapAccess, SeqAccess, Unexpected, Visitor};
 use crate::external::Vec;
 use crate::external::Box;
 use crate::tx::types::{
-    AccountId, Address, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
+    AccountId, Account, AuthorityId, BlockNumber, Bytes, Key, KeyValue, SerdeHash,
 };
 
 #[derive(Encode, Decode, Clone, Debug)]
@@ -729,7 +729,7 @@ pub mod indices {
 
 pub mod balances {
     use super::{Compact, Decode, Deserialize, Encode, Serialize};
-    use super::Address;
+    use super::Account;
 
     pub const MODULE: u8 = 0x04;
 
@@ -744,13 +744,13 @@ pub mod balances {
 
     #[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
     pub struct Transfer {
-        pub dest: Address,
+        pub dest: Account,
         pub value: Compact<u128>,
     }
 
     #[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
     pub struct SetBalance {
-        pub who: Address,
+        pub who: Account,
         pub free: Compact<u128>,
         pub reserved: Compact<u128>,
     }
@@ -834,7 +834,7 @@ pub mod finality_tracker {
 
 pub mod assets {
     use super::{Compact, Decode, Deserialize, Encode, Serialize};
-    use super::Address;
+    use super::Account;
     use super::Bytes;
 
     pub const MODULE: u8 = 0x08;
@@ -859,7 +859,7 @@ pub mod assets {
     pub struct Transfer {
         pub shard_code: Bytes,
         pub id: Compact<u32>,
-        pub target: Address,
+        pub target: Account,
         pub amount: Compact<u128>,
     }
 }
@@ -914,7 +914,7 @@ pub mod storage {
 
 pub mod sudo {
     use super::{Decode, Deserialize, Encode, Serialize};
-    use super::Address;
+    use super::Account;
     use super::Call as UniversalCall;
     use super::Box;
     use super::Vec;
@@ -936,7 +936,7 @@ pub mod sudo {
 
     #[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
     pub struct SetKey {
-        pub addresses: Vec<Address>,
+        pub addresses: Vec<Account>,
     }
 }
 

@@ -21,7 +21,7 @@ use crate::external::Vec;
 pub use crate::tx::call::Call;
 use crate::tx::serde::SerdeHex;
 
-pub const ADDRESS_LEN: usize = 33;
+pub const ACCOUNT_LEN: usize = 33;
 pub const HASH_LEN: usize = 32;
 
 pub type Public = [u8; PUBLIC_KEY_LEN];
@@ -48,24 +48,24 @@ pub struct Bytes(#[serde(with = "SerdeHex")] pub Vec<u8>);
 pub struct SerdeHash(#[serde(with = "SerdeHex")] pub [u8; 32]);
 
 #[derive(Clone, Serialize, Deserialize)]
-pub struct Address(#[serde(with = "SerdeHex")] pub [u8; ADDRESS_LEN]);
+pub struct Account(#[serde(with = "SerdeHex")] pub [u8; ACCOUNT_LEN]);
 
-impl Debug for Address {
+impl Debug for Account {
     fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
         write!(f, "Address({:?})", self.0.to_vec())
     }
 }
 
 pub struct Transaction {
-    pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
+    pub signature: Option<(Account, Signature, Compact<Nonce>, Era)>,
     pub call: Call,
 }
 
-pub fn address_from_public(public_key: &[u8]) -> Address {
-    let mut address = [0; ADDRESS_LEN];
+pub fn account_from_public(public_key: &[u8]) -> Account {
+    let mut address = [0; ACCOUNT_LEN];
     address[0] = 0xff;
     (&mut address[1..]).copy_from_slice(public_key);
-    Address(address)
+    Account(address)
 }
 
 pub type Period = u64;
@@ -150,7 +150,7 @@ impl Decode for Era {
     }
 }
 
-impl Encode for Address {
+impl Encode for Account {
     fn encode_to<W: Output>(&self, dest: &mut W) {
         for item in self.0.iter() {
             dest.push_byte(*item);
@@ -158,12 +158,12 @@ impl Encode for Address {
     }
 }
 
-impl Decode for Address {
+impl Decode for Account {
     fn decode<I: Input>(input: &mut I) -> Option<Self> {
-        let mut buffer = [0u8; ADDRESS_LEN];
+        let mut buffer = [0u8; ACCOUNT_LEN];
         let len = input.read(&mut buffer);
         match len {
-            ADDRESS_LEN => Some(Address(buffer)),
+            ACCOUNT_LEN => Some(Account(buffer)),
             _ => None,
         }
     }
@@ -218,7 +218,7 @@ mod tests {
     #[test]
     fn test_address() {
         let public = vec![1u8; PUBLIC_KEY_LEN];
-        let address = address_from_public(&public);
+        let address = account_from_public(&public);
         assert_eq!(
             address.0.to_vec(),
             vec![
@@ -231,7 +231,7 @@ mod tests {
     #[test]
     fn test_address_encode() {
         let public = vec![1u8; PUBLIC_KEY_LEN];
-        let address = address_from_public(&public);
+        let address = account_from_public(&public);
         assert_eq!(address.encode(), address.0.to_vec());
     }
 

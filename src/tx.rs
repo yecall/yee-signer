@@ -17,10 +17,12 @@ use parity_codec::Encode;
 use parity_codec::{Compact, Decode, Input};
 
 use crate::tx::types::{
-    address_from_public, Address, Call, Era, Hash, Nonce, Secret, Signature, Transaction, HASH_LEN,
+    account_from_public, Account, Call, Era, Hash, Nonce, Secret, Signature, Transaction, HASH_LEN,
 };
 use crate::{KeyPair, SignerResult, Verifier, PUBLIC_KEY_LEN};
 use crate::external::Vec;
+use regex::Regex;
+use crate::address::address_decode;
 
 pub mod call;
 mod serde;
@@ -29,7 +31,9 @@ pub mod types;
 const CTX: &[u8] = b"substrate";
 
 pub fn build_call(json: &[u8]) -> SignerResult<Call> {
-    let call: Call = serde_json::from_slice(json).map_err(|_| "invalid json")?;
+    let json = String::from_utf8_lossy(json);
+    let json = replace_address(json.as_ref()).map_err(|_| "invalid json")?;
+    let call: Call = serde_json::from_str(&json).map_err(|_| "invalid json")?;
     Ok(call)
 }
 
@@ -44,7 +48,7 @@ pub fn build_tx(
     let key_pair = KeyPair::from_secret_key(&secret_key)?;
 
     let public_key = key_pair.public_key();
-    let address = address_from_public(&public_key);
+    let address = account_from_public(&public_key);
     let era = Era::mortal(period, current);
     let nonce = Compact(nonce);
 
@@ -75,7 +79,7 @@ pub fn decode_tx_method(raw: &[u8]) -> SignerResult<(u8, u8)> {
     let is_signed = version & 0b1000_0000 != 0;
 
     struct A {
-        pub signature: Option<(Address, Signature, Compact<Nonce>, Era)>,
+        pub signature: Option<(Account, Signature, Compact<Nonce>, Era)>,
         pub call: (i8, i8),
     }
 
@@ -123,20 +127,90 @@ fn blake2b_256(data: &[u8]) -> Hash {
     r
 }
 
-pub fn blake2_256_into(data: &[u8], dest: &mut [u8; 32]) {
+fn blake2_256_into(data: &[u8], dest: &mut [u8; 32]) {
     dest.copy_from_slice(blake2_rfc::blake2b::blake2b(32, &[], data).as_bytes());
+}
+
+fn replace_address(json: &str) -> SignerResult<String> {
+    let pattern = Regex::new(r#""((yee|tyee)[^"]+)""#).map_err(|_|"failed to replace address")?;
+
+    let mut error  = false;
+    let replaced = pattern.replace_all(json.as_ref(), |captures: &regex::Captures| {
+        let address = &captures[1];
+        let public_key = match address_decode(address) {
+            Ok((public_key, _hrp)) => public_key,
+            Err(_e) => {
+                error = true;
+                return "".to_string();
+            }
+        };
+        let account = account_from_public(&public_key);
+        let account = format!("0x{}", hex::encode(&account.0[..]));
+        format!(r#""{}""#, account)
+    });
+    if error {
+        return Err("failed to replace address".to_string());
+    }
+    let replaced = replaced.to_string();
+    Ok(replaced)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use parity_codec::Decode;
+    use crate::address::address_encode;
+
+    #[test]
+    fn test_replace_address() {
+        let call = r#"{ "module":4, "method":0, "params":{"dest":"yee15c2cc2uj34w5jkfzxe4dndpnngprxe4nytaj9axmzf63ur4f8awq2gafdf","value":100}}"#;
+        let replaced = replace_address(call).unwrap();
+        assert_eq!(replaced, r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#);
+    }
+
+    #[test]
+    fn test_replace_address_testnet() {
+        let call = r#"{ "module":4, "method":0, "params":{"dest":"tyee15c2cc2uj34w5jkfzxe4dndpnngprxe4nytaj9axmzf63ur4f8awq806lv6","value":100}}"#;
+        let replaced = replace_address(call).unwrap();
+        assert_eq!(replaced, r#"{ "module":4, "method":0, "params":{"dest":"0xffa6158c2b928d5d495922366ad9b4339a023366b322fb22f4db12751e0ea93f5c","value":100}}"#);
+    }
+
+    #[test]
+    fn test_replace_address_failed() {
+        let call = r#"{ "module":4, "method":0, "params":{"dest":"yee15c2cc2uj34w5jkfzxe4dndpnngprxe4nytaj9axmzf63ur4f8awq2gafd","value":100}}"#;
+        let replaced = replace_address(call);
+        assert!(replaced.is_err())
+    }
 
     #[test]
     fn test_tx_balance_transfer() {
         let (key_pair0, key_pair4) = get_key_pairs();
-        let dest = address_from_public(&key_pair4.public_key());
+        let dest = account_from_public(&key_pair4.public_key());
         let dest = format!("0x{}", hex::encode(&dest.0[..]));
+        let value = 100;
+
+        let module = call::balances::MODULE;
+        let method = call::balances::TRANSFER;
+        let call = format!(
+            r#"{{ "module":{}, "method":{}, "params":{{"dest":"{}","value":{}}}}}"#,
+            module, method, dest, value
+        );
+        #[cfg(feature = "std")]
+        println!("call: {}", call);
+
+        let call = build_call(call.as_bytes()).unwrap();
+
+        let nonce = 0;
+        let (current, current_hash) = get_current();
+
+        let expected = (140, module, method);
+        test_tx(key_pair0, nonce, current, current_hash, call, expected);
+    }
+
+    #[test]
+    fn test_tx_balance_transfer_with_address() {
+        let (key_pair0, key_pair4) = get_key_pairs();
+        let dest = address_encode(&key_pair4.public_key(), "yee").unwrap();
         let value = 100;
 
         let module = call::balances::MODULE;
@@ -160,9 +234,32 @@ mod tests {
     #[test]
     fn test_tx_sudo_set_key() {
         let (key_pair0, key_pair4) = get_key_pairs();
-        let address = address_from_public(&key_pair4.public_key());
+        let address = account_from_public(&key_pair4.public_key());
 
         let address = format!("0x{}", hex::encode(&address.0[..]));
+
+        let module = call::sudo::MODULE;
+        let method = call::sudo::SET_KEY;
+        let call = format!(
+            r#"{{ "module":{}, "method":{}, "params":{{"addresses":["{}"]}}}}"#,
+            module, method, address
+        );
+        #[cfg(feature = "std")]
+        println!("call: {}", call);
+
+        let call = build_call(call.as_bytes()).unwrap();
+
+        let nonce = 0;
+        let (current, current_hash) = get_current();
+
+        let expected = (139, module, method);
+        test_tx(key_pair0, nonce, current, current_hash, call, expected);
+    }
+
+    #[test]
+    fn test_tx_sudo_set_key_with_address() {
+        let (key_pair0, key_pair4) = get_key_pairs();
+        let address = address_encode(&key_pair4.public_key(), "yee").unwrap();
 
         let module = call::sudo::MODULE;
         let method = call::sudo::SET_KEY;
