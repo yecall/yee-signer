@@ -90,9 +90,6 @@ impl Serialize for Call {
 				balances::Call::Transfer(call) => {
 					serialize_call(serializer, balances::MODULE, balances::TRANSFER, call)
 				}
-				balances::Call::SetBalance(call) => {
-					serialize_call(serializer, balances::MODULE, balances::SET_BALANCE, call)
-				}
 			},
 			Call::Sharding(call) => match call {
 				sharding::Call::SetShardInfo(call) => {
@@ -270,9 +267,6 @@ impl<'de> Deserialize<'de> for Call {
 						balances::TRANSFER => {
 							Call::Balances(balances::Call::Transfer(seq_next_element(seq, &self)?))
 						}
-						balances::SET_BALANCE => Call::Balances(balances::Call::SetBalance(
-							seq_next_element(seq, &self)?,
-						)),
 						unknown => {
 							return Err(de::Error::invalid_value(
 								Unexpected::Unsigned(unknown as u64),
@@ -465,9 +459,6 @@ impl<'de> Deserialize<'de> for Call {
 									balances::TRANSFER => {
 										Call::Balances(balances::Call::Transfer(map.next_value()?))
 									}
-									balances::SET_BALANCE => Call::Balances(
-										balances::Call::SetBalance(map.next_value()?),
-									),
 									unknown => {
 										return Err(de::Error::invalid_value(
 											Unexpected::Unsigned(unknown as u64),
@@ -733,25 +724,16 @@ pub mod balances {
 	pub const MODULE: u8 = 0x04;
 
 	pub const TRANSFER: u8 = 0x00;
-	pub const SET_BALANCE: u8 = 0x01;
 
 	#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
 	pub enum Call {
 		Transfer(Transfer),
-		SetBalance(SetBalance),
 	}
 
 	#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
 	pub struct Transfer {
 		pub dest: Account,
 		pub value: Compact<u128>,
-	}
-
-	#[derive(Encode, Decode, Clone, Debug, Serialize, Deserialize)]
-	pub struct SetBalance {
-		pub who: Account,
-		pub free: Compact<u128>,
-		pub reserved: Compact<u128>,
 	}
 }
 
